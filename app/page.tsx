@@ -8,6 +8,7 @@ import { About } from "@/features/about/about";
 import { ContactCTA } from "@/features/contact-cta/contact-cta";
 import { getTranslation } from "@/lib/i18n/get-translation";
 import { LangProvider } from "@/lib/i18n/use-translation";
+import { absoluteUrl, siteConfig } from "@/lib/seo";
 
 function Divider() {
   return <div className="h-px bg-gradient-to-r from-transparent via-[color:rgba(255,87,35,0.15)] to-transparent" />;
@@ -15,8 +16,56 @@ function Divider() {
 
 export default async function Home() {
   const { t, lang } = await getTranslation();
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": absoluteUrl("/#organization"),
+        name: siteConfig.name,
+        url: absoluteUrl("/"),
+        logo: absoluteUrl("/icon"),
+        description: siteConfig.description,
+        contactPoint: [
+          {
+            "@type": "ContactPoint",
+            contactType: "sales",
+            telephone: siteConfig.whatsapp,
+            availableLanguage: ["Spanish", "English"],
+          },
+        ],
+      },
+      {
+        "@type": "WebSite",
+        "@id": absoluteUrl("/#website"),
+        url: absoluteUrl("/"),
+        name: siteConfig.name,
+        description: siteConfig.description,
+        inLanguage: lang === "en" ? "en" : "es",
+        publisher: {
+          "@id": absoluteUrl("/#organization"),
+        },
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": absoluteUrl("/#service"),
+        name: siteConfig.name,
+        url: absoluteUrl("/"),
+        description: siteConfig.description,
+        telephone: siteConfig.whatsapp,
+        areaServed: "Worldwide",
+        serviceType: t.services.items.map((item) => item.title),
+      },
+    ],
+  };
+
   return (
     <LangProvider initialLang={lang}>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <SiteHeader />
       <main className="pt-16">
         <Hero t={t.hero} />
