@@ -63,7 +63,7 @@ export default async function Home() {
         url: absoluteUrl("/"),
         description: siteConfig.description,
         telephone: siteConfig.whatsapp,
-        email: "hola@itera.com",
+        email: "weareitera@gmail.com",
         logo: absoluteUrl("/itera-og.png"),
         image: absoluteUrl("/itera-og.png"),
         address: {

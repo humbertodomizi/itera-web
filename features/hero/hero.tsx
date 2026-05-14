@@ -10,7 +10,7 @@ export function Hero({ t }: { t: Dictionary["hero"] }) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   return (
-    <section id="hero" className="relative overflow-hidden scroll-mt-24 py-[120px]">
+    <section id="hero" className="hero-section relative overflow-hidden scroll-mt-24 py-[120px]">
       <div className="pointer-events-none absolute -left-56 top-16 h-96 w-96 rounded-full bg-[color:rgba(255,87,35,0.07)] blur-[7.5rem]" />
       <div className="pointer-events-none absolute -right-56 top-28 h-96 w-96 rounded-full bg-[color:rgba(255,87,35,0.07)] blur-[7.5rem]" />
       <div className="mx-auto max-w-[1200px] px-6 md:px-[52px]">
@@ -21,7 +21,7 @@ export function Hero({ t }: { t: Dictionary["hero"] }) {
           {t.line3}
         </h1>
         <p className="mt-7 max-w-3xl text-[17px] leading-[1.65] text-[var(--muted-foreground)]">{t.sub}</p>
-        <div className="mt-9 flex flex-wrap gap-3">
+        <div className="hero-ctas mt-9 flex flex-wrap gap-3">
           <Button variant="brand" onClick={scrollTo("contact")}>{t.cta1}</Button>
           <Button variant="outline-soft" onClick={scrollTo("how-it-works")}>{t.cta2}</Button>
         </div>

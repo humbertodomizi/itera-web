@@ -18,6 +18,10 @@ export function SiteHeader() {
 
   const onNav = (id: string) => {
     setMenuOpen(false);
+    if (id === "hero") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
@@ -39,14 +43,14 @@ export function SiteHeader() {
     <header
       className={cn(
         "fixed top-0 z-50 h-16 w-full transition-colors duration-300",
-        surfaceOn && "border-b border-[color:var(--border)] bg-[var(--background)]/90 backdrop-blur-xl",
+        surfaceOn && "border-b border-[color:var(--border)] bg-[var(--background)]/98 backdrop-blur-2xl",
       )}
     >
       <div className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between px-6 md:px-[52px]">
         <button onClick={() => onNav("hero")} className="cursor-pointer">
           <Logo size={27} textClassName="text-xl leading-none" />
         </button>
-        <nav className="absolute left-1/2 hidden -translate-x-1/2 md:flex items-center gap-8">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 lg:flex items-center gap-8">
           {t.nav.links.map(([id, label]) => (
             <button key={id} onClick={() => onNav(id)} className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
               {label}
@@ -66,7 +70,7 @@ export function SiteHeader() {
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
-            className="relative grid size-10 place-items-center rounded-full border border-[color:var(--border)] text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] md:hidden"
+            className="relative grid size-10 place-items-center rounded-full border border-[color:var(--border)] text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] lg:hidden"
           >
             <Menu
               className={cn(
@@ -90,7 +94,7 @@ export function SiteHeader() {
         id="mobile-nav"
         aria-hidden={!menuOpen}
         className={cn(
-          "absolute left-0 right-0 top-16 origin-top overflow-hidden border-b border-[color:var(--border)] bg-[var(--background)]/95 backdrop-blur-xl transition-all duration-300 ease-out md:hidden",
+          "absolute left-0 right-0 top-16 origin-top overflow-hidden border-b border-[color:var(--border)] bg-[var(--background)] transition-all duration-300 ease-out lg:hidden",
           menuOpen ? "max-h-[80vh] opacity-100" : "pointer-events-none max-h-0 opacity-0",
         )}
       >

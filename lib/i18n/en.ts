@@ -3,10 +3,12 @@ import type { Dictionary } from "@/lib/i18n/types";
 export const en: Dictionary = {
   nav: {
     links: [
+      ["hero", "Home"],
       ["services", "Services"],
-      ["how-it-works", "How it works"],
+      ["how-it-works", "How we work"],
       ["processes", "Process"],
       ["about", "About"],
+      ["contact", "Contact"],
     ],
     cta: "Let's talk",
   },
@@ -33,7 +35,7 @@ export const en: Dictionary = {
     ],
   },
   how: {
-    label: "How it works",
+    label: "How we work",
     h: "A simple process,\nbuilt for you.",
     steps: [
       { n: "01", icon: "compass", title: "We listen", desc: "We talk about your business, your goals, and what's slowing you down. No tech jargon — just understanding before proposing." },
@@ -67,14 +69,23 @@ export const en: Dictionary = {
     highlight: "evolve",
     hSuffix: "your business?",
     sub: "Tell us what you have in mind. We'll get back to you soon with a clear proposal — no commitment.",
-    btn: "Let's talk",
+    whatsapp: {
+      title: "Talk on WhatsApp",
+      desc: "Let's have a quick chat about your project. We reply in minutes — no long forms.",
+      btn: "Let's talk",
+    },
+    email: {
+      title: "I'd rather send an email",
+      desc: "Tell us in detail what you have in mind and we'll come back with a clear proposal within 24h.",
+      btn: "Send email",
+    },
   },
   footer: {
     tagline: "Software, design, and artificial intelligence at the service of your business.",
     cols: [
       ["Services", ["Web Development", "UX/UI Design", "AI Software", "Automations", "Consulting"]],
-      ["Company", ["About", "Blog", "Contact"]],
-      ["Connect", ["LinkedIn", "Instagram", "hello@itera.com"]],
+      ["Company", ["About", "Contact"]],
+      ["Connect", ["Instagram", "weareitera@gmail.com"]],
     ],
     copy: "© Itera. All rights reserved.",
     sub: "Technology to evolve your business.",

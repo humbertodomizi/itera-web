@@ -1,15 +1,37 @@
 "use client";
 
-import { useState } from "react";
 import { FeatureIcon } from "@/components/common/feature-icon";
-import { MobileCardCarousel } from "@/components/common/mobile-card-carousel";
+import { useAutoplayCarousel } from "@/lib/hooks/use-autoplay-carousel";
 import type { Dictionary } from "@/lib/i18n/types";
 
 type Item = Dictionary["processes"]["items"][number];
 
-function ProcessDetail({ item }: { item: Item }) {
+function ProcessDetail({ item, onPrev, onNext, showNav }: {
+  item: Item;
+  onPrev?: () => void;
+  onNext?: () => void;
+  showNav?: boolean;
+}) {
   return (
-    <article className="flex h-full flex-col rounded-[22px] border border-[color:var(--border)] bg-[var(--background)] p-8">
+    <article className="relative flex h-full flex-col overflow-hidden rounded-[22px] border border-[color:var(--border)] bg-[var(--background)] px-12 py-8">
+      {showNav && (
+        <>
+          <button
+            onClick={onPrev}
+            aria-label="Anterior"
+            className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[var(--muted-foreground)]"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button
+            onClick={onNext}
+            aria-label="Siguiente"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[var(--muted-foreground)]"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </>
+      )}
       <div className="flex size-12 items-center justify-center rounded-full bg-[var(--brand-tint)] text-[var(--brand)]">
         <FeatureIcon name={item.icon} className="size-6" />
       </div>
@@ -23,8 +45,11 @@ function ProcessDetail({ item }: { item: Item }) {
 }
 
 export function Processes({ t }: { t: Dictionary["processes"] }) {
-  const [active, setActive] = useState(0);
+  const { active, setActive, pause, resume } = useAutoplayCarousel(t.items.length);
   const current = t.items[active];
+  const goPrev = () => setActive((a) => (a - 1 + t.items.length) % t.items.length);
+  const goNext = () => setActive((a) => (a + 1) % t.items.length);
+
   return (
     <section id="processes" className="scroll-mt-24 py-[120px] bg-[var(--surface)]">
       <div className="mx-auto max-w-[1200px] px-6 md:px-[52px]">
@@ -32,7 +57,11 @@ export function Processes({ t }: { t: Dictionary["processes"] }) {
         <h2 className="mt-4 whitespace-pre-line text-[36px] leading-[1.1] tracking-[-0.03em] font-extrabold md:text-[52px] md:leading-[1.08]">{t.h}</h2>
         <p className="mt-5 max-w-3xl text-[17px] leading-[1.65] text-[var(--muted-foreground)]">{t.sub}</p>
 
-        <div className="mt-10 hidden gap-7 lg:grid lg:grid-cols-2">
+        <div
+          className="mt-10 hidden gap-7 lg:grid lg:grid-cols-2"
+          onMouseEnter={pause}
+          onMouseLeave={resume}
+        >
           <div className="space-y-4">
             {t.items.map((item, idx) => (
               <button
@@ -62,14 +91,62 @@ export function Processes({ t }: { t: Dictionary["processes"] }) {
           </div>
           <div className="sticky top-20 self-start">
             <ProcessDetail item={current} />
+            <div className="mt-6 flex gap-2">
+              {t.items.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  aria-label={`Paso ${i + 1}`}
+                  className={`h-2 w-2 rounded-full ${i === active ? "bg-[var(--brand)]" : "bg-[var(--border)]"}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
         <div className="mt-8 lg:hidden">
-          <MobileCardCarousel
-            labels={t.items.map((item) => item.tag)}
-            cards={t.items.map((item) => <ProcessDetail key={item.tag} item={item} />)}
-          />
+          <div
+            className="relative"
+            onTouchStart={(e) => {
+              pause();
+              const touch = e.touches[0];
+              (e.currentTarget as HTMLDivElement).dataset.touchX = String(touch.clientX);
+            }}
+            onTouchEnd={(e) => {
+              const startX = Number((e.currentTarget as HTMLDivElement).dataset.touchX ?? 0);
+              const diff = startX - e.changedTouches[0].clientX;
+              if (Math.abs(diff) >= 40) {
+                if (diff > 0) goNext();
+                else goPrev();
+              }
+              resume();
+            }}
+          >
+            <div className="grid">
+              {t.items.map((item, idx) => (
+                <div
+                  key={item.tag}
+                  className={`col-start-1 row-start-1 transition-opacity duration-300 ${
+                    idx === active ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+                  }`}
+                >
+                  <ProcessDetail item={item} showNav onPrev={goPrev} onNext={goNext} />
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex justify-center gap-2">
+              {t.items.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  aria-label={`Paso ${i + 1}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === active ? "w-5 bg-[var(--brand)]" : "w-2 bg-[var(--border)]"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

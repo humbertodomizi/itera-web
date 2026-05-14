@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { FeatureIcon } from "@/components/common/feature-icon";
+import { useAutoplayCarousel } from "@/lib/hooks/use-autoplay-carousel";
 import type { Dictionary } from "@/lib/i18n/types";
 
 type Step = Dictionary["how"]["steps"][number];
@@ -52,15 +52,21 @@ function StepDetail({ step, onPrev, onNext, isFirst, isLast, showNav }: {
 }
 
 export function HowItWorks({ t }: { t: Dictionary["how"] }) {
-  const [active, setActive] = useState(0);
+  const { active, setActive, pause, resume } = useAutoplayCarousel(t.steps.length);
   const step = t.steps[active];
+  const goPrev = () => setActive((a) => (a - 1 + t.steps.length) % t.steps.length);
+  const goNext = () => setActive((a) => (a + 1) % t.steps.length);
   return (
     <section id="how-it-works" className="scroll-mt-24 py-[120px]">
       <div className="mx-auto max-w-[1200px] px-6 md:px-[52px]">
         <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--brand)]">{t.label}</p>
         <h2 className="mt-4 whitespace-pre-line text-[36px] leading-[1.1] tracking-[-0.03em] font-extrabold md:text-[52px] md:leading-[1.08]">{t.h}</h2>
 
-        <div className="mt-10 hidden gap-7 lg:grid lg:grid-cols-2">
+        <div
+          className="mt-10 hidden gap-7 lg:grid lg:grid-cols-2"
+          onMouseEnter={pause}
+          onMouseLeave={resume}
+        >
           <div className="space-y-4">
             {t.steps.map((s, idx) => (
               <button
@@ -107,15 +113,18 @@ export function HowItWorks({ t }: { t: Dictionary["how"] }) {
           <div
             className="relative"
             onTouchStart={(e) => {
+              pause();
               const touch = e.touches[0];
               (e.currentTarget as HTMLDivElement).dataset.touchX = String(touch.clientX);
             }}
             onTouchEnd={(e) => {
               const startX = Number((e.currentTarget as HTMLDivElement).dataset.touchX ?? 0);
               const diff = startX - e.changedTouches[0].clientX;
-              if (Math.abs(diff) < 40) return;
-              if (diff > 0) setActive((a) => Math.min(t.steps.length - 1, a + 1));
-              else setActive((a) => Math.max(0, a - 1));
+              if (Math.abs(diff) >= 40) {
+                if (diff > 0) goNext();
+                else goPrev();
+              }
+              resume();
             }}
           >
             <div className="grid">
@@ -126,14 +135,7 @@ export function HowItWorks({ t }: { t: Dictionary["how"] }) {
                     idx === active ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
                   }`}
                 >
-                  <StepDetail
-                    step={s}
-                    showNav
-                    isFirst={idx === 0}
-                    isLast={idx === t.steps.length - 1}
-                    onPrev={() => setActive((a) => Math.max(0, a - 1))}
-                    onNext={() => setActive((a) => Math.min(t.steps.length - 1, a + 1))}
-                  />
+                  <StepDetail step={s} showNav onPrev={goPrev} onNext={goNext} />
                 </div>
               ))}
             </div>

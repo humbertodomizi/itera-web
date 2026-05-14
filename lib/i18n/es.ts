@@ -3,10 +3,12 @@ import type { Dictionary } from "@/lib/i18n/types";
 export const es: Dictionary = {
   nav: {
     links: [
+      ["hero", "Inicio"],
       ["services", "Servicios"],
-      ["how-it-works", "Cómo funciona"],
+      ["how-it-works", "Cómo trabajamos"],
       ["processes", "Procesos"],
       ["about", "Nosotros"],
+      ["contact", "Contacto"],
     ],
     cta: "Hablemos",
   },
@@ -69,7 +71,7 @@ export const es: Dictionary = {
     ],
   },
   how: {
-    label: "Cómo funciona",
+    label: "Cómo trabajamos",
     h: "Un proceso simple,\npensado para ti.",
     steps: [
       {
@@ -148,14 +150,23 @@ export const es: Dictionary = {
     highlight: "evolucionar",
     hSuffix: "tu negocio?",
     sub: "Cuéntanos qué tienes en mente. Te respondemos pronto con una propuesta clara — sin compromiso.",
-    btn: "Hablemos",
+    whatsapp: {
+      title: "Hablemos por WhatsApp",
+      desc: "Conversemos rápido sobre tu proyecto. Te respondemos en minutos, sin formularios largos.",
+      btn: "Hablemos",
+    },
+    email: {
+      title: "Prefiero escribir un email",
+      desc: "Contanos con detalle qué tenés en mente y te respondemos con una propuesta clara en menos de 24hs.",
+      btn: "Enviar email",
+    },
   },
   footer: {
     tagline: "Tecnología para evolucionar negocios.",
     cols: [
       ["Servicios", ["Desarrollo Web", "Diseño UX/UI", "Software con IA", "Automatizaciones", "Consultoría"]],
-      ["Empresa", ["Nosotros", "Blog", "Contacto"]],
-      ["Conectar", ["LinkedIn", "Instagram", "hola@itera.com"]],
+      ["Empresa", ["Nosotros", "Contacto"]],
+      ["Conectar", ["Instagram", "weareitera@gmail.com"]],
     ],
     copy: "© Itera. Todos los derechos reservados.",
     sub: "Tecnología para evolucionar tu negocio.",

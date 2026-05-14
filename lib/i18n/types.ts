@@ -58,7 +58,8 @@ export type Dictionary = {
     highlight: string;
     hSuffix: string;
     sub: string;
-    btn: string;
+    whatsapp: { title: string; desc: string; btn: string };
+    email: { title: string; desc: string; btn: string };
   };
   footer: {
     tagline: string;

@@ -5,6 +5,7 @@ import "./globals.css";
 // import { CometRain } from "@/components/common/comet-rain";
 import { GridShimmer } from "@/components/common/grid-shimmer";
 import { GridSpotlight } from "@/components/common/grid-spotlight";
+import { ScrollToTop } from "@/components/common/scroll-to-top";
 import { absoluteUrl, getSiteUrl, siteConfig } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -101,6 +102,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <GridShimmer />
         {/* <CometRain /> */}
         {children}
+        <ScrollToTop />
       </body>
     </html>
   );
