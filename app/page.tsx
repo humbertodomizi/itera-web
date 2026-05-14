@@ -56,6 +56,31 @@ export default async function Home() {
         areaServed: "Worldwide",
         serviceType: t.services.items.map((item) => item.title),
       },
+      {
+        "@type": "LocalBusiness",
+        "@id": absoluteUrl("/#localbusiness"),
+        name: siteConfig.name,
+        url: absoluteUrl("/"),
+        description: siteConfig.description,
+        telephone: siteConfig.whatsapp,
+        email: "hola@itera.com",
+        logo: absoluteUrl("/itera-og.png"),
+        image: absoluteUrl("/itera-og.png"),
+        address: {
+          "@type": "PostalAddress",
+          addressCountry: "AR",
+        },
+        areaServed: [
+          { "@type": "Country", name: "Argentina" },
+          { "@type": "Country", name: "Uruguay" },
+          { "@type": "Country", name: "Chile" },
+        ],
+        priceRange: "$$",
+        sameAs: [
+          "https://www.instagram.com/weareitera",
+          "https://www.linkedin.com/company/weareitera",
+        ],
+      },
     ],
   };
 

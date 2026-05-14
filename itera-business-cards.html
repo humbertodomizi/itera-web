@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Itera — Business Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* A4 page: 210 × 297 mm */
+  .page {
+    width: 210mm;
+    height: 297mm;
+    padding: 13.5mm 20mm; /* top/bottom + left/right margins */
+    display: grid;
+    grid-template-columns: 85mm 85mm;
+    grid-template-rows: repeat(4, 54mm);
+    gap: 5mm 5mm;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  /* ─── FRONT ─── */
+  .card-front {
+    width: 85mm;
+    height: 54mm;
+    background: #111214;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5mm 6mm;
+  }
+
+  /* Subtle grid */
+  .card-front::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 6mm 6mm;
+    pointer-events: none;
+  }
+
+  /* Orange glow top-right */
+  .card-front::after {
+    content: '';
+    position: absolute;
+    top: -10mm;
+    right: -8mm;
+    width: 40mm;
+    height: 40mm;
+    background: radial-gradient(circle, rgba(255,87,35,.18), transparent 65%);
+    pointer-events: none;
+  }
+
+  .card-front-top {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 1mm;
+  }
+
+  .card-front-bottom {
+    position: relative;
+  }
+
+  .card-name {
+    font-size: 8.5pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #F2F2F2;
+    margin-bottom: 1mm;
+  }
+
+  .card-role {
+    font-size: 6pt;
+    font-weight: 500;
+    color: #9A9A9A;
+    letter-spacing: 0.02em;
+  }
+
+  .card-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8mm;
+    position: relative;
+  }
+
+  .card-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5mm;
+    font-size: 5.5pt;
+    color: #9A9A9A;
+    font-weight: 500;
+  }
+
+  .card-contact-item svg {
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  .card-tagline {
+    position: absolute;
+    bottom: 5mm;
+    right: 6mm;
+    font-size: 4.5pt;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: #FF5723;
+    opacity: 0.7;
+  }
+
+  /* Wordmark text */
+  .wm {
+    font-size: 13pt;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #F2F2F2;
+    line-height: 1;
+  }
+
+  /* ─── BACK ─── */
+  .card-back {
+    width: 85mm;
+    height: 54mm;
+    background: #111214;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Grid */
+  .card-back::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 6mm 6mm;
+    pointer-events: none;
+  }
+
+  /* Orange glow center */
+  .card-back::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50mm;
+    height: 50mm;
+    background: radial-gradient(circle, rgba(255,87,35,.10), transparent 65%);
+    pointer-events: none;
+  }
+
+  .card-back-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+    z-index: 1;
+  }
+
+  .qr-wrap {
+    background: #fff;
+    border-radius: 2mm;
+    padding: 2mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qr-wrap img {
+    width: 22mm;
+    height: 22mm;
+    display: block;
+  }
+
+  .card-back-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+  }
+
+  .card-back-logo {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.8mm;
+    margin-bottom: 1mm;
+  }
+
+  .back-wm {
+    font-size: 11pt;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #F2F2F2;
+    line-height: 1;
+  }
+
+  .card-back-tagline {
+    font-size: 5.5pt;
+    color: #9A9A9A;
+    font-weight: 500;
+    line-height: 1.5;
+    max-width: 32mm;
+  }
+
+  .card-back-url {
+    font-size: 5pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #FF5723;
+  }
+
+  /* ─── PRINT ─── */
+  @media print {
+    body { background: #fff; }
+    .page { page-break-after: always; break-after: page; }
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- snippets reutilizables via template -->
+<template id="iso">
+  <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+</template>
+<template id="ico-email">
+  <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+</template>
+<template id="ico-web">
+  <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+</template>
+<template id="ico-phone">
+  <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+</template>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 — FRONT (8 tarjetas iguales)
+══════════════════════════════════════════ -->
+<div class="page">
+
+  <div class="card-front">
+    <div class="card-front-top">
+      <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+      <span class="wm">Itera</span>
+    </div>
+    <div class="card-front-bottom">
+      <div style="font-size:10.5pt;font-weight:800;letter-spacing:-0.025em;color:#F2F2F2;line-height:1.2;margin-bottom:3mm">Tecnología para<br>evolucionar negocios.</div>
+      <div class="card-contact">
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>3467443669</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hola@itera.com</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>weareitera.com</div>
+      </div>
+    </div>
+    <div class="card-tagline">Software · Diseño · IA</div>
+  </div>
+
+  <div class="card-front">
+    <div class="card-front-top">
+      <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+      <span class="wm">Itera</span>
+    </div>
+    <div class="card-front-bottom">
+      <div style="font-size:10.5pt;font-weight:800;letter-spacing:-0.025em;color:#F2F2F2;line-height:1.2;margin-bottom:3mm">Tecnología para<br>evolucionar negocios.</div>
+      <div class="card-contact">
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>3467443669</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hola@itera.com</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>weareitera.com</div>
+      </div>
+    </div>
+    <div class="card-tagline">Software · Diseño · IA</div>
+  </div>
+
+  <div class="card-front">
+    <div class="card-front-top">
+      <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+      <span class="wm">Itera</span>
+    </div>
+    <div class="card-front-bottom">
+      <div style="font-size:10.5pt;font-weight:800;letter-spacing:-0.025em;color:#F2F2F2;line-height:1.2;margin-bottom:3mm">Tecnología para<br>evolucionar negocios.</div>
+      <div class="card-contact">
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>3467443669</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hola@itera.com</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>weareitera.com</div>
+      </div>
+    </div>
+    <div class="card-tagline">Software · Diseño · IA</div>
+  </div>
+
+  <div class="card-front">
+    <div class="card-front-top">
+      <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+      <span class="wm">Itera</span>
+    </div>
+    <div class="card-front-bottom">
+      <div style="font-size:10.5pt;font-weight:800;letter-spacing:-0.025em;color:#F2F2F2;line-height:1.2;margin-bottom:3mm">Tecnología para<br>evolucionar negocios.</div>
+      <div class="card-contact">
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>3467443669</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hola@itera.com</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>weareitera.com</div>
+      </div>
+    </div>
+    <div class="card-tagline">Software · Diseño · IA</div>
+  </div>
+
+  <div class="card-front">
+    <div class="card-front-top">
+      <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+      <span class="wm">Itera</span>
+    </div>
+    <div class="card-front-bottom">
+      <div style="font-size:10.5pt;font-weight:800;letter-spacing:-0.025em;color:#F2F2F2;line-height:1.2;margin-bottom:3mm">Tecnología para<br>evolucionar negocios.</div>
+      <div class="card-contact">
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>3467443669</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hola@itera.com</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>weareitera.com</div>
+      </div>
+    </div>
+    <div class="card-tagline">Software · Diseño · IA</div>
+  </div>
+
+  <div class="card-front">
+    <div class="card-front-top">
+      <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+      <span class="wm">Itera</span>
+    </div>
+    <div class="card-front-bottom">
+      <div style="font-size:10.5pt;font-weight:800;letter-spacing:-0.025em;color:#F2F2F2;line-height:1.2;margin-bottom:3mm">Tecnología para<br>evolucionar negocios.</div>
+      <div class="card-contact">
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>3467443669</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hola@itera.com</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>weareitera.com</div>
+      </div>
+    </div>
+    <div class="card-tagline">Software · Diseño · IA</div>
+  </div>
+
+  <div class="card-front">
+    <div class="card-front-top">
+      <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+      <span class="wm">Itera</span>
+    </div>
+    <div class="card-front-bottom">
+      <div style="font-size:10.5pt;font-weight:800;letter-spacing:-0.025em;color:#F2F2F2;line-height:1.2;margin-bottom:3mm">Tecnología para<br>evolucionar negocios.</div>
+      <div class="card-contact">
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>3467443669</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hola@itera.com</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>weareitera.com</div>
+      </div>
+    </div>
+    <div class="card-tagline">Software · Diseño · IA</div>
+  </div>
+
+  <div class="card-front">
+    <div class="card-front-top">
+      <svg width="24" height="19" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg>
+      <span class="wm">Itera</span>
+    </div>
+    <div class="card-front-bottom">
+      <div style="font-size:10.5pt;font-weight:800;letter-spacing:-0.025em;color:#F2F2F2;line-height:1.2;margin-bottom:3mm">Tecnología para<br>evolucionar negocios.</div>
+      <div class="card-contact">
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>3467443669</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hola@itera.com</div>
+        <div class="card-contact-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>weareitera.com</div>
+      </div>
+    </div>
+    <div class="card-tagline">Software · Diseño · IA</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 — BACK (8 reversos iguales)
+══════════════════════════════════════════ -->
+<div class="page">
+
+  <div class="card-back"><div class="card-back-inner"><div class="qr-wrap"><img src="https://api.qrserver.com/v1/create-qr-code/?size=83x83&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/></div><div class="card-back-info"><div class="card-back-logo"><svg width="20" height="16" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg><span class="back-wm">Itera</span></div><div class="card-back-tagline">Tecnología para evolucionar negocios.</div><div class="card-back-url">weareitera.com</div></div></div></div>
+
+  <div class="card-back"><div class="card-back-inner"><div class="qr-wrap"><img src="https://api.qrserver.com/v1/create-qr-code/?size=83x83&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/></div><div class="card-back-info"><div class="card-back-logo"><svg width="20" height="16" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg><span class="back-wm">Itera</span></div><div class="card-back-tagline">Tecnología para evolucionar negocios.</div><div class="card-back-url">weareitera.com</div></div></div></div>
+
+  <div class="card-back"><div class="card-back-inner"><div class="qr-wrap"><img src="https://api.qrserver.com/v1/create-qr-code/?size=83x83&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/></div><div class="card-back-info"><div class="card-back-logo"><svg width="20" height="16" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg><span class="back-wm">Itera</span></div><div class="card-back-tagline">Tecnología para evolucionar negocios.</div><div class="card-back-url">weareitera.com</div></div></div></div>
+
+  <div class="card-back"><div class="card-back-inner"><div class="qr-wrap"><img src="https://api.qrserver.com/v1/create-qr-code/?size=83x83&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/></div><div class="card-back-info"><div class="card-back-logo"><svg width="20" height="16" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg><span class="back-wm">Itera</span></div><div class="card-back-tagline">Tecnología para evolucionar negocios.</div><div class="card-back-url">weareitera.com</div></div></div></div>
+
+  <div class="card-back"><div class="card-back-inner"><div class="qr-wrap"><img src="https://api.qrserver.com/v1/create-qr-code/?size=83x83&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/></div><div class="card-back-info"><div class="card-back-logo"><svg width="20" height="16" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg><span class="back-wm">Itera</span></div><div class="card-back-tagline">Tecnología para evolucionar negocios.</div><div class="card-back-url">weareitera.com</div></div></div></div>
+
+  <div class="card-back"><div class="card-back-inner"><div class="qr-wrap"><img src="https://api.qrserver.com/v1/create-qr-code/?size=83x83&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/></div><div class="card-back-info"><div class="card-back-logo"><svg width="20" height="16" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg><span class="back-wm">Itera</span></div><div class="card-back-tagline">Tecnología para evolucionar negocios.</div><div class="card-back-url">weareitera.com</div></div></div></div>
+
+  <div class="card-back"><div class="card-back-inner"><div class="qr-wrap"><img src="https://api.qrserver.com/v1/create-qr-code/?size=83x83&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/></div><div class="card-back-info"><div class="card-back-logo"><svg width="20" height="16" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg><span class="back-wm">Itera</span></div><div class="card-back-tagline">Tecnología para evolucionar negocios.</div><div class="card-back-url">weareitera.com</div></div></div></div>
+
+  <div class="card-back"><div class="card-back-inner"><div class="qr-wrap"><img src="https://api.qrserver.com/v1/create-qr-code/?size=83x83&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/></div><div class="card-back-info"><div class="card-back-logo"><svg width="20" height="16" viewBox="0 0 52 40" fill="none"><rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/><rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/><rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/><rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/></svg><span class="back-wm">Itera</span></div><div class="card-back-tagline">Tecnología para evolucionar negocios.</div><div class="card-back-url">weareitera.com</div></div></div></div>
+
+</div>
+
+</body>
+</html>

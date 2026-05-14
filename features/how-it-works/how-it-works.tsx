@@ -2,20 +2,46 @@
 
 import { useState } from "react";
 import { FeatureIcon } from "@/components/common/feature-icon";
-import { MobileCardCarousel } from "@/components/common/mobile-card-carousel";
 import type { Dictionary } from "@/lib/i18n/types";
 
 type Step = Dictionary["how"]["steps"][number];
 
-function StepDetail({ step }: { step: Step }) {
+function StepDetail({ step, onPrev, onNext, isFirst, isLast, showNav }: {
+  step: Step;
+  onPrev?: () => void;
+  onNext?: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
+  showNav?: boolean;
+}) {
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-[22px] border border-[color:var(--border)] bg-[var(--surface)] p-8">
+    <article className="relative flex h-full flex-col overflow-hidden rounded-[22px] border border-[color:var(--border)] bg-[var(--surface)] px-12 py-8">
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -top-2 right-2 select-none font-mono text-[120px] font-extrabold leading-none tracking-[-0.04em] text-[color:rgba(255,87,35,0.10)]"
+        className="pointer-events-none absolute -top-2 right-2 select-none font-sans text-[120px] font-extrabold leading-none tracking-[-0.04em] text-[color:rgba(255,87,35,0.10)]"
       >
         {step.n}
       </span>
+      {showNav && (
+        <>
+          <button
+            onClick={onPrev}
+            disabled={isFirst}
+            aria-label="Anterior"
+            className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[var(--muted-foreground)] transition-opacity disabled:opacity-20"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button
+            onClick={onNext}
+            disabled={isLast}
+            aria-label="Siguiente"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[var(--muted-foreground)] transition-opacity disabled:opacity-20"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </>
+      )}
       <div className="relative flex size-12 items-center justify-center rounded-full bg-[var(--brand-tint)] text-[var(--brand)]">
         <FeatureIcon name={step.icon} className="size-6" />
       </div>
@@ -78,10 +104,52 @@ export function HowItWorks({ t }: { t: Dictionary["how"] }) {
         </div>
 
         <div className="mt-8 lg:hidden">
-          <MobileCardCarousel
-            labels={t.steps.map((s) => `${s.n} · ${s.title}`)}
-            cards={t.steps.map((s) => <StepDetail key={s.n} step={s} />)}
-          />
+          <div
+            className="relative"
+            onTouchStart={(e) => {
+              const touch = e.touches[0];
+              (e.currentTarget as HTMLDivElement).dataset.touchX = String(touch.clientX);
+            }}
+            onTouchEnd={(e) => {
+              const startX = Number((e.currentTarget as HTMLDivElement).dataset.touchX ?? 0);
+              const diff = startX - e.changedTouches[0].clientX;
+              if (Math.abs(diff) < 40) return;
+              if (diff > 0) setActive((a) => Math.min(t.steps.length - 1, a + 1));
+              else setActive((a) => Math.max(0, a - 1));
+            }}
+          >
+            <div className="grid">
+              {t.steps.map((s, idx) => (
+                <div
+                  key={s.n}
+                  className={`col-start-1 row-start-1 transition-opacity duration-300 ${
+                    idx === active ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+                  }`}
+                >
+                  <StepDetail
+                    step={s}
+                    showNav
+                    isFirst={idx === 0}
+                    isLast={idx === t.steps.length - 1}
+                    onPrev={() => setActive((a) => Math.max(0, a - 1))}
+                    onNext={() => setActive((a) => Math.min(t.steps.length - 1, a + 1))}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex justify-center gap-2">
+              {t.steps.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  aria-label={`Paso ${i + 1}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === active ? "w-5 bg-[var(--brand)]" : "w-2 bg-[var(--border)]"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

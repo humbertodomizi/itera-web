@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Itera — Presupuesto</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #E8E8E8;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+    padding: 32px 0 48px;
+  }
+
+  .page {
+    width: 210mm;
+    height: 297mm;
+    background: #F7F6F3;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #111214;
+    padding: 6mm 12mm 5mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    top: -15mm;
+    right: -10mm;
+    width: 60mm;
+    height: 60mm;
+    background: radial-gradient(circle, rgba(255,87,35,.22), transparent 65%);
+    pointer-events: none;
+  }
+
+  /* subtle grid in header */
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 8mm 8mm;
+    pointer-events: none;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: flex-end;
+    gap: 2mm;
+    position: relative;
+  }
+
+  .header-wm {
+    font-size: 19pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #F2F2F2;
+    line-height: 1;
+  }
+
+  .header-right {
+    position: relative;
+    text-align: right;
+  }
+
+  .header-label {
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 1.5mm;
+  }
+
+  .header-doc-title {
+    font-size: 15pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #F2F2F2;
+    line-height: 1;
+  }
+
+  /* ── HERO BAND ── */
+  .hero-band {
+    background: #FF5723;
+    padding: 3mm 12mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .hero-band-title {
+    font-size: 14pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+
+  .hero-band-meta {
+    font-size: 7pt;
+    font-weight: 600;
+    color: rgba(255,255,255,.75);
+    letter-spacing: 0.04em;
+    text-align: right;
+    line-height: 1.7;
+  }
+
+  /* ── BODY ── */
+  .body {
+    flex: 1;
+    padding: 4mm 12mm 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4mm;
+  }
+
+  /* ── INTRO ── */
+  .intro {
+    display: flex;
+    align-items: flex-start;
+    gap: 4mm;
+    background: #fff;
+    border-radius: 3mm;
+    border: 1px solid #E2E0DA;
+    padding: 3.5mm 5mm;
+  }
+
+  .intro-icon {
+    flex-shrink: 0;
+    width: 8mm;
+    height: 8mm;
+    background: rgba(255,87,35,.10);
+    border-radius: 2mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .intro-text {
+    font-size: 7.5pt;
+    color: #555;
+    line-height: 1.65;
+  }
+
+  .intro-text strong {
+    color: #111214;
+    font-weight: 700;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-label {
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 2.5mm;
+  }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5mm;
+  }
+
+  .feature-item {
+    background: #fff;
+    border: 1px solid #E2E0DA;
+    border-radius: 2.5mm;
+    padding: 2.7mm 4mm;
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+  }
+
+  .feature-dot {
+    flex-shrink: 0;
+    width: 4.5mm;
+    height: 4.5mm;
+    border-radius: 50%;
+    background: rgba(255,87,35,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feature-dot::after {
+    content: '';
+    width: 2mm;
+    height: 2mm;
+    border-radius: 50%;
+    background: #FF5723;
+    display: block;
+  }
+
+  .feature-text {
+    font-size: 7.5pt;
+    color: #333;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+
+  /* ── INCLUDES ── */
+  .includes-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5mm;
+  }
+
+  .include-item {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+    background: #fff;
+    border: 1px solid #E2E0DA;
+    border-radius: 2.5mm;
+    padding: 2.7mm 4mm;
+  }
+
+  .include-check {
+    flex-shrink: 0;
+    width: 4.5mm;
+    height: 4.5mm;
+    border-radius: 50%;
+    background: #111214;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .include-text {
+    font-size: 7.5pt;
+    font-weight: 500;
+    color: #333;
+  }
+
+  /* ── PRICING ── */
+  .pricing-card {
+    background: #111214;
+    border-radius: 4mm;
+    padding: 5mm 7mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 6mm 6mm;
+  }
+
+  .pricing-card::after {
+    content: '';
+    position: absolute;
+    top: -10mm;
+    right: -5mm;
+    width: 40mm;
+    height: 40mm;
+    background: radial-gradient(circle, rgba(255,87,35,.20), transparent 65%);
+  }
+
+  .pricing-left {
+    position: relative;
+  }
+
+  .pricing-note {
+    font-size: 6.5pt;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 2mm;
+  }
+
+  .pricing-amount {
+    font-size: 26pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #F2F2F2;
+    line-height: 1;
+  }
+
+  .pricing-period {
+    font-size: 8pt;
+    font-weight: 500;
+    color: rgba(255,255,255,.45);
+    margin-top: 1.5mm;
+  }
+
+  .pricing-right {
+    position: relative;
+    text-align: right;
+    max-width: 55mm;
+  }
+
+  .pricing-disclaimer {
+    font-size: 6.5pt;
+    color: rgba(255,255,255,.45);
+    line-height: 1.6;
+  }
+
+  .pricing-disclaimer strong {
+    color: rgba(255,255,255,.7);
+    font-weight: 600;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: auto;
+    padding: 4mm 12mm 5mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #E2E0DA;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5mm;
+    opacity: 0.5;
+  }
+
+  .footer-wm {
+    font-size: 9pt;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #111214;
+    line-height: 1;
+  }
+
+  .footer-tagline {
+    font-size: 6pt;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9A9A9A;
+  }
+
+  .footer-contact {
+    display: flex;
+    gap: 5mm;
+    align-items: center;
+  }
+
+  .footer-contact-item {
+    font-size: 6pt;
+    color: #9A9A9A;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 1.5mm;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .page { width: 210mm; min-height: 297mm; }
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-logo">
+      <svg width="30" height="23" viewBox="0 0 52 40" fill="none">
+        <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+        <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+        <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+        <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+      </svg>
+      <span class="header-wm">Itera</span>
+    </div>
+    <div class="header-right">
+      <div class="header-label">Propuesta comercial</div>
+      <div class="header-doc-title">Presupuesto</div>
+    </div>
+  </div>
+
+  <!-- HERO BAND -->
+  <div class="hero-band">
+    <div class="hero-band-title">PymesApp — Software de gestión</div>
+    <div class="hero-band-meta">
+      Cliente: La Merced / PetShop<br>
+      Fecha: Mayo 2026 · Ref. #001
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- INTRO -->
+    <div class="intro">
+      <div class="intro-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div class="intro-text">
+        <strong>PymesApp</strong> es un sistema de gestión en la nube desarrollado por Itera, pensado para pequeñas y medianas empresas. Esta propuesta detalla el alcance, características y condiciones de suscripción para <strong>La Merced / PetShop</strong>. El acceso es inmediato tras la activación. Cualquier módulo adicional fuera del alcance descripto se cotizará por separado.
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div>
+      <div class="section-label">Características del proyecto</div>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-text">Panel de inicio con reporte general: ventas, top clientes/productos vendidos y productos de bajo stock</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-text">Gestión completa de clientes, proveedores, productos y ventas</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-text">Filtros y mejoras de accesibilidad para un uso ágil</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-text">Diseño adaptable a todos los dispositivos (PC, celular y tablet)</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-text">Módulo de carga de promociones</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-text">Módulo de finanzas con ingresos (ventas no canceladas) y egresos</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-text">Descarga de PDF con precios y promociones para clientes</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-text">Generación e impresión de tickets de venta</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INCLUDES -->
+    <div>
+      <div class="section-label">¿Qué incluye?</div>
+      <div class="includes-list">
+        <div class="include-item">
+          <div class="include-check">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="include-text">Desarrollo completo del sistema (web + base de datos)</div>
+        </div>
+        <div class="include-item">
+          <div class="include-check">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="include-text">Actualizaciones y mejoras continuas de usabilidad sin costo</div>
+        </div>
+        <div class="include-item">
+          <div class="include-check">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="include-text">Hosting con alta velocidad y disponibilidad online</div>
+        </div>
+        <div class="include-item">
+          <div class="include-check">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="include-text">Adaptación total a todos los dispositivos</div>
+        </div>
+        <div class="include-item">
+          <div class="include-check">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="include-text">Acceso privado</div>
+        </div>
+        <div class="include-item">
+          <div class="include-check">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="include-text">Soporte 24/7</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="pricing-card">
+      <div class="pricing-left">
+        <div class="pricing-note">Suscripción mensual</div>
+        <div class="pricing-amount">$90.000</div>
+        <div class="pricing-period">ARS / mes</div>
+      </div>
+      <div class="pricing-right">
+        <div class="pricing-disclaimer">
+          El precio podrá ajustarse ante variaciones<br>
+          significativas del dólar oficial <strong>(superiores a $100).</strong>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-logo">
+      <svg width="16" height="13" viewBox="0 0 52 40" fill="none">
+        <rect x="2" y="28" width="10" height="9" rx="3" fill="#111214" opacity="0.28"/>
+        <rect x="14" y="22" width="10" height="15" rx="3" fill="#111214" opacity="0.52"/>
+        <rect x="26" y="14" width="10" height="23" rx="3" fill="#111214" opacity="0.76"/>
+        <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+      </svg>
+      <span class="footer-wm">Itera</span>
+    </div>
+    <div class="footer-tagline">Tecnología para evolucionar negocios</div>
+    <div class="footer-contact">
+      <div class="footer-contact-item">
+        <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        hola@itera.com
+      </div>
+      <div class="footer-contact-item">
+        <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        weareitera.com
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

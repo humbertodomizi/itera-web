@@ -7,15 +7,12 @@ type ServiceItem = Dictionary["services"]["items"][number];
 
 function ServiceCard({ item }: { item: ServiceItem }) {
   return (
-    <article className="group h-full rounded-[22px] border border-[color:var(--border)] bg-[var(--background)] p-7 transition-all duration-300 hover:border-[color:rgba(255,87,35,0.30)] hover:shadow-lg">
-      <div className="flex items-center justify-between">
-        <div className="flex size-11 items-center justify-center rounded-full bg-[var(--brand-tint)] text-[var(--brand)]">
-          <FeatureIcon name={item.icon} className="size-5" />
-        </div>
-        <p className="font-mono text-[11px] tracking-[0.1em] text-[var(--brand)]">{item.num}</p>
+    <article className="group flex h-full flex-col rounded-[22px] border border-[color:var(--border)] bg-[var(--background)] p-7 transition-all duration-300 hover:border-[color:rgba(255,87,35,0.30)] hover:shadow-lg">
+      <div className="flex size-11 items-center justify-center rounded-full bg-[var(--brand-tint)] text-[var(--brand)]">
+        <FeatureIcon name={item.icon} className="size-5" />
       </div>
       <h3 className="mt-5 text-xl font-bold">{item.title}</h3>
-      <p className="mt-3 text-sm leading-7 text-[var(--muted-foreground)]">{item.desc}</p>
+      <p className="mt-3 flex-1 text-sm leading-7 text-[var(--muted-foreground)]">{item.desc}</p>
       <div className="mt-5 flex flex-wrap gap-2">{item.tags.map((tag) => <TagChip key={tag} label={tag} />)}</div>
     </article>
   );

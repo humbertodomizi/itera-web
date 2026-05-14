@@ -56,10 +56,10 @@ export const metadata: Metadata = {
     locale: siteConfig.locale,
     images: [
       {
-        url: "/opengraph-image",
+        url: "/itera-og.png",
         width: 1200,
         height: 630,
-        alt: "Itera - tecnologia para evolucionar empresas",
+        alt: "Itera — Tecnología para evolucionar negocios",
       },
     ],
   },
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: ["/opengraph-image"],
+    images: ["/itera-og.png"],
   },
   icons: {
     icon: [{ url: "/icon", type: "image/png" }],

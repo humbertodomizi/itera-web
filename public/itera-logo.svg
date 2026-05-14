@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 160" width="420" height="160">
+  <!-- Isotipo — base alineada en y=148 -->
+  <g transform="translate(20, 0)">
+    <rect x="2"   y="121" width="30" height="27" rx="9"  fill="white" opacity="0.28"/>
+    <rect x="42"  y="103" width="30" height="45" rx="9"  fill="white" opacity="0.52"/>
+    <rect x="82"  y="79"  width="30" height="69" rx="9"  fill="white" opacity="0.76"/>
+    <rect x="124" y="49"  width="15" height="99" rx="9"  fill="#FF5723"/>
+  </g>
+  <!-- Wordmark — baseline en y=148 -->
+  <text
+    x="178" y="148"
+    font-family="Manrope, Arial Black, sans-serif"
+    font-size="96"
+    font-weight="800"
+    fill="white"
+    letter-spacing="-3"
+  >Itera</text>
+</svg>
