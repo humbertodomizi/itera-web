@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITERA — Brand Guidelines</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050912;--bg1:#08111f;--bg2:#0c1830;--bg3:#101f3c;
+  --a:#2563eb;--a2:#5b90f5;--a3:rgba(37,99,235,.13);
+  --t1:#e6eaff;--t2:#8593b8;--t3:#475070;
+  --bd:rgba(55,90,160,.22);--bd2:rgba(90,140,220,.42);
+  --f:'Manrope',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);background:var(--bg);color:var(--t1);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(5,9,18,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd)}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-word{font-size:15px;font-weight:700;letter-spacing:-.025em;color:var(--t1)}
+.nav-links{display:flex;gap:30px}
+.nav-links a{color:var(--t2);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--t1)}
+.nav-badge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--a2);background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.25);padding:4px 12px;border-radius:20px}
+
+/* COVER */
+.cover{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 48px 80px;position:relative;overflow:hidden}
+.cov-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:1000px;height:700px;pointer-events:none;background:radial-gradient(ellipse at 50% 28%,rgba(37,99,235,.17) 0%,transparent 62%)}
+.cov-grid{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 47px,rgba(55,90,160,.05) 47px,rgba(55,90,160,.05) 48px),repeating-linear-gradient(90deg,transparent,transparent 47px,rgba(55,90,160,.05) 47px,rgba(55,90,160,.05) 48px)}
+.cov-eye{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--a2);display:flex;align-items:center;gap:14px;margin-bottom:48px;position:relative}
+.cov-eye::before,.cov-eye::after{content:'';width:52px;height:1px;background:var(--bd2)}
+.cov-mark{margin-bottom:40px;position:relative}
+.cov-title{font-size:104px;font-weight:800;letter-spacing:-.05em;line-height:1;background:linear-gradient(148deg,#fff 0%,var(--t1) 42%,var(--a2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;position:relative}
+.cov-tag{font-size:17px;font-weight:400;color:var(--t2);letter-spacing:.01em;margin-bottom:72px;position:relative}
+.cov-meta{display:flex;align-items:center;gap:0;font-size:11px;font-weight:600;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;position:relative}
+.cov-meta-sep{margin:0 18px;opacity:.35}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--bd) 15%,var(--bd) 85%,transparent)}
+
+/* SECTIONS */
+.sec{padding:112px 48px;max-width:1200px;margin:0 auto}
+.sec-bg{background:var(--bg1)}
+.sec-lbl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--a2);display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.sec-lbl::before{content:'';width:24px;height:1px;background:var(--a2)}
+.sec-h{font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1.08;margin-bottom:18px}
+.sec-p{font-size:17px;color:var(--t2);line-height:1.65;max-width:540px}
+
+/* PILLARS */
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:64px}
+.pill-card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:28px 24px;transition:border-color .25s,box-shadow .25s}
+.pill-card:hover{border-color:var(--bd2);box-shadow:0 0 24px rgba(37,99,235,.08)}
+.pill-num{font-size:11px;font-weight:700;color:var(--a2);letter-spacing:.1em;font-family:var(--fm);margin-bottom:18px}
+.pill-h{font-size:16px;font-weight:700;margin-bottom:8px}
+.pill-p{font-size:13px;color:var(--t2);line-height:1.65}
+
+/* LOGO SECTION */
+.logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px}
+.lcard{border:1px solid var(--bd);border-radius:16px;overflow:hidden;background:var(--bg);transition:border-color .3s}
+.lcard.rec{border-color:var(--a);box-shadow:0 0 0 1px var(--a),0 12px 48px rgba(37,99,235,.22)}
+.lcard-head{padding:16px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.lcard-name{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+.lcard-rec{font-size:10px;font-weight:700;color:var(--a2);background:rgba(37,99,235,.13);padding:3px 10px;border-radius:12px;letter-spacing:.04em}
+.lcard-primary{height:192px;background:#040810;display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid var(--bd)}
+.lcard-primary::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 55%,rgba(37,99,235,.1),transparent 60%)}
+.logo-lockup{display:flex;align-items:center;gap:13px;position:relative}
+.logo-wrd{font-size:28px;font-weight:700;letter-spacing:-.025em;color:var(--t1)}
+.lcard-vars{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--bd)}
+.lv{height:78px;display:flex;align-items:center;justify-content:center;position:relative}
+.lv:first-child{border-right:1px solid var(--bd)}
+.lv-lbl{position:absolute;bottom:7px;left:0;right:0;text-align:center;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--t3)}
+.lv.lv-light{background:#ecf0ff}.lv.lv-light .lv-lbl{color:#7a90c0}
+.lv.lv-mono{background:#101010}.lv.lv-mono .lv-lbl{color:#333}
+.lcard-foot{padding:20px 22px}
+.lcard-desc{font-size:13px;color:var(--t2);line-height:1.62;margin-bottom:12px}
+.lcard-tags{display:flex;gap:6px;flex-wrap:wrap}
+.ltag{font-size:10px;font-weight:600;color:var(--t3);background:var(--bg2);border:1px solid var(--bd);padding:3px 10px;border-radius:10px;letter-spacing:.05em;text-transform:uppercase}
+
+/* LOCKUP ROW */
+.lockup-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+.lockup-cell{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:24px;display:flex;align-items:center;gap:12px}
+.lockup-cell.lc-light{background:#ecf0ff}
+.lockup-cell.lc-dark{background:#060a14}
+.lockup-cell-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-top:10px;text-align:center;display:block;width:100%}
+.lockup-wrap{display:flex;flex-direction:column;align-items:center;width:100%;gap:8px}
+
+/* COLORS */
+.color-main{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:56px}
+.color-row2{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:14px}
+.cc{border-radius:14px;overflow:hidden;border:1px solid var(--bd)}
+.cc-swatch{height:88px}
+.cc-meta{padding:14px 16px;background:var(--bg2)}
+.cc-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.cc-hex{font-size:11px;color:var(--t3);font-family:var(--fm);letter-spacing:.04em}
+.cc-role{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-top:4px;font-weight:600}
+.color-usage{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.cu-card{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:20px 22px}
+.cu-label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.cu-chips{display:flex;gap:6px;flex-wrap:wrap}
+.cu-chip{height:22px;border-radius:5px;padding:0 10px;font-size:10px;font-weight:600;display:flex;align-items:center}
+
+/* TYPE */
+.type-scale{border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-top:60px}
+.tr{display:grid;grid-template-columns:164px 1fr;gap:48px;padding:28px 36px;border-bottom:1px solid var(--bd);align-items:center}
+.tr:last-child{border-bottom:none}
+.tr-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.tr-spec{font-size:11px;color:var(--t3);font-family:var(--fm);line-height:1.85}
+.type-pairs{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+.tp{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:24px;overflow:hidden}
+.tp-lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+
+/* APPS */
+.app-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:60px}
+.app-grid-full{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+.acard{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.acard-lbl{padding:13px 20px;border-bottom:1px solid var(--bd);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+
+.br-chrome{background:var(--bg3);padding:10px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:7px}
+.br-dot{width:9px;height:9px;border-radius:50%}
+.br-bar{flex:1;height:20px;background:var(--bg2);border-radius:5px;margin:0 12px;border:1px solid var(--bd)}
+.br-body{background:var(--bg1);padding:0}
+.br-hero{padding:28px 24px;background:#050912;border-bottom:1px solid var(--bd);position:relative;overflow:hidden}
+.br-hero::before{content:'';position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:300px;height:150px;background:radial-gradient(circle,rgba(37,99,235,.15),transparent 70%)}
+.br-hero-eye{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a2);margin-bottom:10px}
+.br-hero-h{font-size:20px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px;position:relative}
+.br-hero-p{font-size:11px;color:var(--t2);line-height:1.6;max-width:200px;position:relative}
+.br-hero-cta{display:inline-flex;align-items:center;gap:7px;margin-top:14px;background:var(--a);color:#fff;border:none;padding:8px 16px;border-radius:7px;font-size:11px;font-weight:600;font-family:var(--f);cursor:default;position:relative}
+.br-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--bd)}
+.br-metric{padding:14px 18px;border-right:1px solid var(--bd);text-align:center}
+.br-metric:last-child{border-right:none}
+.br-metric-n{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--t1)}
+.br-metric-l{font-size:9px;color:var(--t3);font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
+
+.social-body{padding:24px;display:flex;justify-content:center;background:var(--bg1)}
+.social-sq{width:196px;height:196px;background:#050912;border-radius:14px;border:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden}
+.social-sq::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(37,99,235,.16),transparent 60%)}
+.social-sq-tag{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a2);position:relative}
+.social-sq-h{font-size:16px;font-weight:800;letter-spacing:-.03em;text-align:center;line-height:1.2;position:relative}
+.social-sq-sub{font-size:9px;color:var(--t2);position:relative;letter-spacing:.01em}
+
+.biz-wrap{padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.biz-c{border-radius:10px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--bd);min-height:100px}
+.biz-c.biz-front{background:#050912}.biz-c.biz-back{background:var(--bg2);align-items:center;justify-content:center}
+.biz-name{font-size:10px;font-weight:700;letter-spacing:-.01em}
+.biz-role{font-size:8px;color:var(--t2);font-weight:500;margin-top:2px}
+.biz-info{font-size:7.5px;color:var(--t3);line-height:1.9;font-family:var(--fm)}
+
+.dash-wrap{padding:16px;background:var(--bg1)}
+.dash-top{display:flex;align-items:center;justify-content:space-between;padding:10px 4px;margin-bottom:10px}
+.dash-title{font-size:12px;font-weight:700;letter-spacing:-.01em}
+.dash-sub{font-size:9px;color:var(--t2)}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dash-card{background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:14px}
+.dash-stat{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:3px}
+.dash-sl{font-size:9px;color:var(--t3);font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+.dash-bar{height:3px;background:var(--a);border-radius:2px;margin-top:10px;opacity:.65}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--bd);padding:44px 48px;display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto}
+.footer-copy{font-size:12px;color:var(--t3);font-weight:500}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:12px;color:var(--t3);text-decoration:none;font-weight:500;transition:color .2s}
+.footer-links a:hover{color:var(--t2)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <svg width="22" height="20" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#5b90f5" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#5b90f5" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#5b90f5" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+    <span class="nav-word">Itera</span>
+  </div>
+  <div class="nav-links">
+    <a href="#concept">Concept</a>
+    <a href="#logo">Logo</a>
+    <a href="#colors">Colors</a>
+    <a href="#type">Typography</a>
+    <a href="#apps">Applications</a>
+  </div>
+  <div class="nav-badge">Brand Guidelines v1.0</div>
+</nav>
+
+<!-- COVER -->
+<section class="cover" id="cover">
+  <div class="cov-glow"></div>
+  <div class="cov-grid"></div>
+  <div class="cov-eye">Visual Identity System</div>
+  <div class="cov-mark">
+    <svg width="80" height="72" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#e6eaff" opacity=".28"/>
+      <rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#e6eaff" opacity=".52"/>
+      <rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#e6eaff" opacity=".76"/>
+      <rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/>
+    </svg>
+  </div>
+  <h1 class="cov-title">Itera</h1>
+  <p class="cov-tag">Technology to evolve businesses</p>
+  <div class="cov-meta">
+    <span>Brand v1.0</span><span class="cov-meta-sep">·</span>
+    <span>2025</span><span class="cov-meta-sep">·</span>
+    <span>Confidential</span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONCEPT -->
+<div id="concept">
+<div class="sec">
+  <div class="sec-lbl">01 — Brand Concept</div>
+  <h2 class="sec-h">Built for efficiency.<br>Designed to scale.</h2>
+  <p class="sec-p">Itera helps businesses evolve through automation, intelligent systems, and process optimization. The identity conveys precision, momentum, and measurable impact.</p>
+  <div class="pillars">
+    <div class="pill-card">
+      <div class="pill-num">01</div>
+      <div class="pill-h">Efficiency</div>
+      <p class="pill-p">Every decision eliminates friction and maximizes output across systems and teams.</p>
+    </div>
+    <div class="pill-card">
+      <div class="pill-num">02</div>
+      <div class="pill-h">Precision</div>
+      <p class="pill-p">Engineering-grade accuracy in every solution, from architecture to final delivery.</p>
+    </div>
+    <div class="pill-card">
+      <div class="pill-num">03</div>
+      <div class="pill-h">Scale</div>
+      <p class="pill-p">Systems built to grow with the business — agile today, enterprise-ready tomorrow.</p>
+    </div>
+    <div class="pill-card">
+      <div class="pill-num">04</div>
+      <div class="pill-h">Intelligence</div>
+      <p class="pill-p">Smart automation and data-driven processes that help teams focus on what matters.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- LOGO SYSTEM -->
+<div id="logo" class="sec-bg">
+<div class="sec">
+  <div class="sec-lbl">02 — Logo System</div>
+  <h2 class="sec-h">Three directions.<br>One identity.</h2>
+  <p class="sec-p">Each direction is grounded in the concept of iteration, forward motion, and measurable progress. Direction B is recommended as the primary mark.</p>
+
+  <div class="logo-grid">
+
+    <!-- DIRECTION A: BEAM -->
+    <div class="lcard">
+      <div class="lcard-head">
+        <span class="lcard-name">Direction A — Beam</span>
+      </div>
+      <div class="lcard-primary">
+        <div class="logo-lockup">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <rect x="4" y="4" width="32" height="7" rx="2.5" fill="#e6eaff"/>
+            <rect x="14.5" y="13" width="11" height="14" rx="2.5" fill="#e6eaff"/>
+            <rect x="4" y="29" width="32" height="7" rx="2.5" fill="#e6eaff"/>
+          </svg>
+          <span class="logo-wrd">Itera</span>
+        </div>
+      </div>
+      <div class="lcard-vars">
+        <div class="lv lv-light">
+          <svg width="30" height="30" viewBox="0 0 40 40" fill="none">
+            <rect x="4" y="4" width="32" height="7" rx="2.5" fill="#0c1830"/>
+            <rect x="14.5" y="13" width="11" height="14" rx="2.5" fill="#0c1830"/>
+            <rect x="4" y="29" width="32" height="7" rx="2.5" fill="#0c1830"/>
+          </svg>
+          <span class="lv-lbl">Light</span>
+        </div>
+        <div class="lv lv-mono">
+          <svg width="30" height="30" viewBox="0 0 40 40" fill="none">
+            <rect x="4" y="4" width="32" height="7" rx="2.5" fill="#fff"/>
+            <rect x="14.5" y="13" width="11" height="14" rx="2.5" fill="#fff"/>
+            <rect x="4" y="29" width="32" height="7" rx="2.5" fill="#fff"/>
+          </svg>
+          <span class="lv-lbl">Mono</span>
+        </div>
+      </div>
+      <div class="lcard-foot">
+        <p class="lcard-desc">Geometric I-beam derived from the first letter of Itera. Structural, precise, and architectural — suggests solid engineering and reliability.</p>
+        <div class="lcard-tags"><span class="ltag">Structural</span><span class="ltag">Typographic</span><span class="ltag">Timeless</span></div>
+      </div>
+    </div>
+
+    <!-- DIRECTION B: ASCEND (RECOMMENDED) -->
+    <div class="lcard rec">
+      <div class="lcard-head">
+        <span class="lcard-name">Direction B — Ascend</span>
+        <span class="lcard-rec">★ Recommended</span>
+      </div>
+      <div class="lcard-primary">
+        <div class="logo-lockup">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#e6eaff" opacity=".28"/>
+            <rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#e6eaff" opacity=".52"/>
+            <rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#e6eaff" opacity=".76"/>
+            <rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/>
+          </svg>
+          <span class="logo-wrd">Itera</span>
+        </div>
+      </div>
+      <div class="lcard-vars">
+        <div class="lv lv-light">
+          <svg width="30" height="30" viewBox="0 0 40 40" fill="none">
+            <rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#0c1830" opacity=".28"/>
+            <rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#0c1830" opacity=".52"/>
+            <rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#0c1830" opacity=".76"/>
+            <rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/>
+          </svg>
+          <span class="lv-lbl">Light</span>
+        </div>
+        <div class="lv lv-mono">
+          <svg width="30" height="30" viewBox="0 0 40 40" fill="none">
+            <rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#fff" opacity=".28"/>
+            <rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#fff" opacity=".52"/>
+            <rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#fff" opacity=".76"/>
+            <rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#fff"/>
+          </svg>
+          <span class="lv-lbl">Mono</span>
+        </div>
+      </div>
+      <div class="lcard-foot">
+        <p class="lcard-desc">Four ascending bars represent growth, metrics, and continuous improvement. The blue anchor bar at the bottom grounds the mark — the iteration that delivers results.</p>
+        <div class="lcard-tags"><span class="ltag">Dynamic</span><span class="ltag">SaaS-native</span><span class="ltag">Scalable</span></div>
+      </div>
+    </div>
+
+    <!-- DIRECTION C: SHIFT -->
+    <div class="lcard">
+      <div class="lcard-head">
+        <span class="lcard-name">Direction C — Shift</span>
+      </div>
+      <div class="lcard-primary">
+        <div class="logo-lockup">
+          <svg width="44" height="40" viewBox="0 0 44 40" fill="none">
+            <rect x="2" y="6" width="26" height="7" rx="3" fill="#e6eaff"/>
+            <rect x="9" y="17" width="26" height="7" rx="3" fill="#5b90f5" opacity=".68"/>
+            <rect x="16" y="28" width="26" height="7" rx="3" fill="#2563eb" opacity=".38"/>
+          </svg>
+          <span class="logo-wrd">Itera</span>
+        </div>
+      </div>
+      <div class="lcard-vars">
+        <div class="lv lv-light">
+          <svg width="36" height="30" viewBox="0 0 44 40" fill="none">
+            <rect x="2" y="6" width="26" height="7" rx="3" fill="#0c1830"/>
+            <rect x="9" y="17" width="26" height="7" rx="3" fill="#0c1830" opacity=".6"/>
+            <rect x="16" y="28" width="26" height="7" rx="3" fill="#2563eb" opacity=".5"/>
+          </svg>
+          <span class="lv-lbl">Light</span>
+        </div>
+        <div class="lv lv-mono">
+          <svg width="36" height="30" viewBox="0 0 44 40" fill="none">
+            <rect x="2" y="6" width="26" height="7" rx="3" fill="#fff"/>
+            <rect x="9" y="17" width="26" height="7" rx="3" fill="#fff" opacity=".55"/>
+            <rect x="16" y="28" width="26" height="7" rx="3" fill="#fff" opacity=".24"/>
+          </svg>
+          <span class="lv-lbl">Mono</span>
+        </div>
+      </div>
+      <div class="lcard-foot">
+        <p class="lcard-desc">Three offset layers cascade forward, embodying iteration as a physical motion — each step advancing beyond the last. Editorial and distinctively modern.</p>
+        <div class="lcard-tags"><span class="ltag">Editorial</span><span class="ltag">Motion</span><span class="ltag">Distinctive</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Horizontal lockup row -->
+  <div style="margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:22px 28px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);margin-bottom:16px">Horizontal Lockup — Dark</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#e6eaff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#e6eaff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#e6eaff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.025em;color:var(--t1)">Itera</span>
+      </div>
+    </div>
+    <div style="background:#ecf0ff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:22px 28px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8093c0;margin-bottom:16px">Horizontal Lockup — Light</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#0c1830" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#0c1830" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#0c1830" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+        <span style="font-size:22px;font-weight:700;letter-spacing:-.025em;color:#0c1830">Itera</span>
+      </div>
+    </div>
+    <div style="background:#050912;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:22px 28px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#333;margin-bottom:16px">Compact — Isotype Only</div>
+      <div style="display:flex;align-items:center;gap:20px">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#fff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#fff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#fff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+        <svg width="24" height="24" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#fff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#fff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#fff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+        <svg width="16" height="16" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#fff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#fff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#fff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COLORS -->
+<div id="colors">
+<div class="sec">
+  <div class="sec-lbl">03 — Color Palette</div>
+  <h2 class="sec-h">Precise.<br>Purposeful.</h2>
+  <p class="sec-p">A palette built on depth and restraint. Deep navy grounds the identity; electric blue drives action; fog white carries clarity.</p>
+
+  <div class="color-main">
+    <div class="cc"><div class="cc-swatch" style="background:#050912"></div><div class="cc-meta"><div class="cc-name">Void</div><div class="cc-hex">#050912</div><div class="cc-role">Primary BG</div></div></div>
+    <div class="cc"><div class="cc-swatch" style="background:#0c1830"></div><div class="cc-meta"><div class="cc-name">Deep Navy</div><div class="cc-hex">#0C1830</div><div class="cc-role">Surface / Card</div></div></div>
+    <div class="cc"><div class="cc-swatch" style="background:#2563eb"></div><div class="cc-meta"><div class="cc-name">Electric Blue</div><div class="cc-hex">#2563EB</div><div class="cc-role">Primary Accent</div></div></div>
+    <div class="cc"><div class="cc-swatch" style="background:#5b90f5"></div><div class="cc-meta"><div class="cc-name">Sky Blue</div><div class="cc-hex">#5B90F5</div><div class="cc-role">Secondary Accent</div></div></div>
+    <div class="cc"><div class="cc-swatch" style="background:#e6eaff"></div><div class="cc-meta"><div class="cc-name">Fog White</div><div class="cc-hex">#E6EAFF</div><div class="cc-role">Primary Text</div></div></div>
+  </div>
+  <div class="color-row2">
+    <div class="cc"><div class="cc-swatch" style="background:#101f3c"></div><div class="cc-meta"><div class="cc-name">Midnight</div><div class="cc-hex">#101F3C</div><div class="cc-role">Border / Hover</div></div></div>
+    <div class="cc"><div class="cc-swatch" style="background:#8593b8"></div><div class="cc-meta"><div class="cc-name">Steel</div><div class="cc-hex">#8593B8</div><div class="cc-role">Secondary Text</div></div></div>
+    <div class="cc"><div class="cc-swatch" style="background:#475070"></div><div class="cc-meta"><div class="cc-name">Slate</div><div class="cc-hex">#475070</div><div class="cc-role">Muted / Label</div></div></div>
+    <div class="cc"><div class="cc-swatch" style="background:#ecf0ff"></div><div class="cc-meta"><div class="cc-name">Ice</div><div class="cc-hex">#ECF0FF</div><div class="cc-role">Light Surface</div></div></div>
+    <div class="cc"><div class="cc-swatch" style="background:rgba(37,99,235,.13)"></div><div class="cc-meta"><div class="cc-name">Haze</div><div class="cc-hex">rgba(37,99,235,.13)</div><div class="cc-role">Subtle Highlight</div></div></div>
+  </div>
+
+  <div class="color-usage">
+    <div class="cu-card">
+      <div class="cu-label">Backgrounds</div>
+      <div class="cu-chips">
+        <div class="cu-chip" style="background:#050912;color:#e6eaff;border:1px solid rgba(255,255,255,.06)">Void #050912</div>
+        <div class="cu-chip" style="background:#0c1830;color:#8593b8;border:1px solid rgba(255,255,255,.06)">Deep Navy</div>
+        <div class="cu-chip" style="background:#101f3c;color:#8593b8;border:1px solid rgba(255,255,255,.06)">Midnight</div>
+      </div>
+    </div>
+    <div class="cu-card">
+      <div class="cu-label">Interactive</div>
+      <div class="cu-chips">
+        <div class="cu-chip" style="background:#2563eb;color:#fff">Primary CTA</div>
+        <div class="cu-chip" style="background:rgba(37,99,235,.13);color:#5b90f5;border:1px solid rgba(37,99,235,.25)">Ghost</div>
+        <div class="cu-chip" style="background:transparent;color:#5b90f5;border:1px solid rgba(90,140,220,.4)">Outline</div>
+      </div>
+    </div>
+    <div class="cu-card">
+      <div class="cu-label">Typography</div>
+      <div class="cu-chips">
+        <div class="cu-chip" style="background:transparent;color:#e6eaff;border:1px solid var(--bd)">H1–H3</div>
+        <div class="cu-chip" style="background:transparent;color:#8593b8;border:1px solid var(--bd)">Body</div>
+        <div class="cu-chip" style="background:transparent;color:#475070;border:1px solid var(--bd)">Label</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TYPOGRAPHY -->
+<div id="type">
+<div class="sec" style="background:var(--bg1);max-width:none;padding:112px 48px">
+<div style="max-width:1200px;margin:0 auto">
+  <div class="sec-lbl">04 — Typography</div>
+  <h2 class="sec-h">Manrope.</h2>
+  <p class="sec-p">Geometric, humanist, and unapologetically modern. Manrope's optical balance and clean forms make it ideal for technical, data-rich interfaces.</p>
+
+  <div class="type-scale">
+    <div class="tr">
+      <div><div class="tr-lbl">Display</div><div class="tr-spec">104px / 800<br>tracking –.05em<br>line-height 1.0</div></div>
+      <div style="font-size:64px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--t1);overflow:hidden;white-space:nowrap">Itera</div>
+    </div>
+    <div class="tr">
+      <div><div class="tr-lbl">Heading 1</div><div class="tr-spec">52px / 800<br>tracking –.04em<br>line-height 1.08</div></div>
+      <div style="font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1.08;color:var(--t1)">Technology to<br>evolve businesses</div>
+    </div>
+    <div class="tr">
+      <div><div class="tr-lbl">Heading 2</div><div class="tr-spec">32px / 700<br>tracking –.03em<br>line-height 1.2</div></div>
+      <div style="font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.2;color:var(--t1)">Automation that works at scale</div>
+    </div>
+    <div class="tr">
+      <div><div class="tr-lbl">Heading 3</div><div class="tr-spec">22px / 700<br>tracking –.02em<br>line-height 1.3</div></div>
+      <div style="font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.3;color:var(--t1)">Enterprise systems built for the modern era</div>
+    </div>
+    <div class="tr">
+      <div><div class="tr-lbl">Body Large</div><div class="tr-spec">17px / 400<br>tracking .01em<br>line-height 1.65</div></div>
+      <div style="font-size:17px;font-weight:400;letter-spacing:.01em;line-height:1.65;color:var(--t2);max-width:520px">We help businesses evolve through intelligent automation, web development, and enterprise software. Precision-built systems that scale with your ambitions.</div>
+    </div>
+    <div class="tr">
+      <div><div class="tr-lbl">Body</div><div class="tr-spec">14px / 400<br>tracking .01em<br>line-height 1.65</div></div>
+      <div style="font-size:14px;font-weight:400;letter-spacing:.01em;line-height:1.65;color:var(--t2);max-width:480px">Process optimization, agile solutions, and digital transformation for SMEs and growing enterprises. Built to reduce friction and increase throughput across every operation.</div>
+    </div>
+    <div class="tr">
+      <div><div class="tr-lbl">Label / Caption</div><div class="tr-spec">11px / 600–700<br>tracking .10em<br>UPPERCASE</div></div>
+      <div style="display:flex;gap:24px;align-items:center">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--a2)">Section Label</span>
+        <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">Metadata Tag</span>
+        <span style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--t3);font-family:var(--fm)">#050912 / 14px / 400</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- APPLICATIONS -->
+<div id="apps">
+<div class="sec">
+  <div class="sec-lbl">05 — Applications</div>
+  <h2 class="sec-h">Identity in action.</h2>
+  <p class="sec-p">How the Itera brand lives across touchpoints — from product UI to business cards to social media.</p>
+
+  <div class="app-grid">
+    <!-- Website Mockup -->
+    <div class="acard">
+      <div class="acard-lbl">Website — Hero Section</div>
+      <div class="br-chrome">
+        <div class="br-dot" style="background:#ff5f56"></div>
+        <div class="br-dot" style="background:#ffbd2d"></div>
+        <div class="br-dot" style="background:#27c840"></div>
+        <div class="br-bar"></div>
+      </div>
+      <div class="br-body">
+        <div style="background:#040810;padding:8px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:7px">
+            <svg width="14" height="14" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#e6eaff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#e6eaff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#e6eaff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+            <span style="font-size:10px;font-weight:700;color:var(--t1)">Itera</span>
+          </div>
+          <div style="display:flex;gap:12px">
+            <span style="font-size:9px;color:var(--t3)">Services</span>
+            <span style="font-size:9px;color:var(--t3)">About</span>
+            <span style="font-size:9px;color:var(--t3)">Contact</span>
+          </div>
+          <div style="background:var(--a);padding:4px 10px;border-radius:5px;font-size:9px;font-weight:600;color:#fff">Get started</div>
+        </div>
+        <div class="br-hero">
+          <div class="br-hero-eye">Technology · Automation · Scale</div>
+          <div class="br-hero-h" style="font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px">Technology to<br>evolve businesses</div>
+          <p class="br-hero-p">We build enterprise systems, automations, and digital solutions that help businesses operate at a higher level.</p>
+          <button class="br-hero-cta">Get started →</button>
+        </div>
+        <div class="br-metrics">
+          <div class="br-metric"><div class="br-metric-n">200+</div><div class="br-metric-l">Projects delivered</div></div>
+          <div class="br-metric"><div class="br-metric-n">98%</div><div class="br-metric-l">Client satisfaction</div></div>
+          <div class="br-metric"><div class="br-metric-n">12×</div><div class="br-metric-l">Avg. efficiency gain</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Mockup -->
+    <div class="acard">
+      <div class="acard-lbl">Product UI — Dashboard</div>
+      <div class="br-chrome">
+        <div class="br-dot" style="background:#ff5f56"></div>
+        <div class="br-dot" style="background:#ffbd2d"></div>
+        <div class="br-dot" style="background:#27c840"></div>
+        <div class="br-bar"></div>
+      </div>
+      <div class="dash-wrap">
+        <div class="dash-top">
+          <div><div class="dash-title">Operations Overview</div><div class="dash-sub" style="font-size:9px;color:var(--t3);margin-top:2px">Q2 2025 — Live</div></div>
+          <div style="background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);padding:4px 10px;border-radius:6px;font-size:9px;font-weight:600;color:var(--a2)">● Live</div>
+        </div>
+        <div class="dash-grid">
+          <div class="dash-card"><div class="dash-stat">2,847</div><div class="dash-sl">Processes automated</div><div class="dash-bar" style="width:88%"></div></div>
+          <div class="dash-card"><div class="dash-stat">↑ 34%</div><div class="dash-sl">Efficiency gain</div><div class="dash-bar" style="width:64%;background:#5b90f5"></div></div>
+          <div class="dash-card"><div class="dash-stat">99.9%</div><div class="dash-sl">Uptime</div><div class="dash-bar" style="width:96%;background:#22c55e"></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+          <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:12px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:10px">Pipeline</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--t2)">Web Development</span><span style="font-size:10px;font-weight:600;color:var(--a2)">Active</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--t2)">ERP Integration</span><span style="font-size:10px;font-weight:600;color:#22c55e">Done</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--t2)">Automation Suite</span><span style="font-size:10px;font-weight:600;color:var(--t3)">Queued</span></div>
+            </div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:12px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:10px">Team</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between"><span style="font-size:10px;color:var(--t2)">Engineers</span><span style="font-size:10px;font-weight:700">12</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="font-size:10px;color:var(--t2)">Active sprints</span><span style="font-size:10px;font-weight:700">4</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="font-size:10px;color:var(--t2)">Velocity</span><span style="font-size:10px;font-weight:700;color:var(--a2)">↑ 23%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-grid-full" style="margin-top:22px">
+    <!-- Social Card -->
+    <div class="acard">
+      <div class="acard-lbl">Social Media — Square Post (1080×1080)</div>
+      <div class="social-body">
+        <div class="social-sq">
+          <span class="social-sq-tag">Technology × Automation</span>
+          <div style="position:relative">
+            <svg width="40" height="36" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#e6eaff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#e6eaff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#e6eaff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+          </div>
+          <div class="social-sq-h">Technology<br>to evolve<br>businesses</div>
+          <span class="social-sq-sub">itera.com</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;padding-left:20px">
+          <div style="background:#040810;border:1px solid var(--bd);border-radius:10px;padding:14px 16px;width:120px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--a2);margin-bottom:8px">LinkedIn</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+              <svg width="16" height="16" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#e6eaff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#e6eaff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#e6eaff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+              <span style="font-size:10px;font-weight:700;color:var(--t1)">Itera</span>
+            </div>
+            <div style="font-size:8.5px;color:var(--t2);line-height:1.5">Technology to evolve businesses.</div>
+          </div>
+          <div style="background:#040810;border:1px solid var(--bd);border-radius:10px;padding:14px 16px;width:120px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--a2);margin-bottom:8px">Twitter / X</div>
+            <div style="font-size:8.5px;color:var(--t2);line-height:1.55">@itera — Enterprise systems, automation &amp; web dev for businesses that want to operate smarter.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Business Cards -->
+    <div class="acard">
+      <div class="acard-lbl">Business Card — Front &amp; Back</div>
+      <div class="biz-wrap">
+        <div class="biz-c biz-front">
+          <div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">
+              <svg width="18" height="18" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#e6eaff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#e6eaff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#e6eaff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+              <span style="font-size:12px;font-weight:700;letter-spacing:-.02em;color:var(--t1)">Itera</span>
+            </div>
+            <div class="biz-name">Alexandre Costa</div>
+            <div class="biz-role">Chief Executive Officer</div>
+          </div>
+          <div class="biz-info">hello@itera.com<br>+1 (555) 000-0000<br>itera.com</div>
+        </div>
+        <div class="biz-c biz-back" style="justify-content:center;align-items:center;display:flex;flex-direction:column;gap:10px">
+          <svg width="36" height="32" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#e6eaff" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#e6eaff" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#e6eaff" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+          <span style="font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)">Technology to evolve businesses</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="divider"></div>
+<div class="footer">
+  <div style="display:flex;align-items:center;gap:10px">
+    <svg width="16" height="16" viewBox="0 0 40 40" fill="none"><rect x="4" y="7" width="10" height="4.5" rx="2.25" fill="#5b90f5" opacity=".28"/><rect x="4" y="15.5" width="18" height="4.5" rx="2.25" fill="#5b90f5" opacity=".52"/><rect x="4" y="24" width="26" height="4.5" rx="2.25" fill="#5b90f5" opacity=".76"/><rect x="4" y="32.5" width="32" height="4.5" rx="2.25" fill="#2563eb"/></svg>
+    <span class="footer-copy">© 2025 Itera. Brand Guidelines v1.0 — Confidential</span>
+  </div>
+  <div class="footer-links">
+    <a href="#cover">Cover</a>
+    <a href="#concept">Concept</a>
+    <a href="#logo">Logo</a>
+    <a href="#colors">Colors</a>
+    <a href="#type">Type</a>
+    <a href="#apps">Applications</a>
+  </div>
+</div>
+
+<script>
+// Smooth nav highlight on scroll
+const sections = document.querySelectorAll('[id]');
+const links = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) cur = s.id; });
+  links.forEach(l => {
+    l.style.color = l.getAttribute('href') === '#' + cur ? '#e6eaff' : '';
+  });
+});
+</script>
+</body>
+</html>
