@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Itera — Flyers</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #E8E8E8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* A4 horizontal: 297 × 210 mm
+     3 flyers de 90×195mm con gap entre ellos y márgenes para guías de corte */
+  .sheet {
+    width: 297mm;
+    height: 210mm;
+    padding: 7.5mm 9.5mm;
+    display: grid;
+    grid-template-columns: repeat(3, 90mm);
+    gap: 4mm;
+    position: relative;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .flyer {
+    width: 90mm;
+    height: 195mm;
+    background: #111214;
+    position: relative;
+    overflow: hidden;
+    color: #F2F2F2;
+  }
+
+  /* Marcas de corte: líneas finas grises en las esquinas externas
+     de cada flyer, fuera de los bordes (para no contaminar el diseño). */
+  .flyer-wrap {
+    position: relative;
+  }
+  .flyer-wrap::before,
+  .flyer-wrap::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+  }
+  /* Top-left corner marks */
+  .flyer-wrap::before {
+    top: -3mm;
+    left: -3mm;
+    width: 2mm;
+    height: 2mm;
+    border-top: 0.2mm solid #999;
+    border-left: 0.2mm solid #999;
+  }
+  /* Bottom-right corner marks */
+  .flyer-wrap::after {
+    bottom: -3mm;
+    right: -3mm;
+    width: 2mm;
+    height: 2mm;
+    border-bottom: 0.2mm solid #999;
+    border-right: 0.2mm solid #999;
+  }
+  /* Mirror marks via a second pseudo-element layer on flyer itself */
+  .flyer-wrap > .flyer::before {
+    /* base flyer already uses ::before for the grid pattern, we use a separate decoration approach via wrapper extra elements */
+  }
+  /* Extra corners using direct elements */
+  .crop-mark { position: absolute; pointer-events: none; }
+  .crop-mark.tr { top: -3mm; right: -3mm; width: 2mm; height: 2mm; border-top: 0.2mm solid #999; border-right: 0.2mm solid #999; }
+  .crop-mark.bl { bottom: -3mm; left: -3mm; width: 2mm; height: 2mm; border-bottom: 0.2mm solid #999; border-left: 0.2mm solid #999; }
+
+  /* Grid pattern */
+  .flyer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.028) 1px, transparent 1px);
+    background-size: 7mm 7mm;
+    pointer-events: none;
+  }
+
+  /* ═══════════════════════════ FRONT ═══════════════════════════ */
+  .flyer-front {
+    display: flex;
+    flex-direction: column;
+    padding: 12mm 10mm;
+  }
+
+  /* Orange glow top-right */
+  .flyer-front::after {
+    content: '';
+    position: absolute;
+    top: -25mm;
+    right: -20mm;
+    width: 80mm;
+    height: 80mm;
+    background: radial-gradient(circle, rgba(255,87,35,.22), transparent 65%);
+    pointer-events: none;
+  }
+
+  .ff-header {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 2mm;
+    margin-bottom: 16mm;
+  }
+
+  .ff-wm {
+    font-size: 18pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .ff-label {
+    position: relative;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 5mm;
+  }
+
+  .ff-hero-title {
+    position: relative;
+    font-size: 26pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: #fff;
+    margin-bottom: 6mm;
+  }
+
+  .ff-hero-title span {
+    color: #FF5723;
+  }
+
+  .ff-hero-desc {
+    position: relative;
+    font-size: 9pt;
+    line-height: 1.6;
+    color: rgba(242,242,242,.7);
+    margin-bottom: auto;
+  }
+
+  /* Tag chips at bottom */
+  .ff-tags {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2mm;
+    margin-top: 10mm;
+  }
+
+  .ff-tag {
+    font-size: 7pt;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 1.5mm 3mm;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 99px;
+    color: rgba(242,242,242,.85);
+  }
+
+  /* CTA pill near bottom */
+  .ff-cta {
+    position: relative;
+    margin-top: 8mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4mm 5mm;
+    background: #FF5723;
+    border-radius: 3mm;
+  }
+
+  .ff-cta-text {
+    font-size: 9.5pt;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .ff-cta-arrow {
+    width: 8mm;
+    height: 8mm;
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ═══════════════════════════ BACK ═══════════════════════════ */
+  .flyer-back {
+    display: flex;
+    flex-direction: column;
+    padding: 12mm 10mm;
+  }
+
+  .flyer-back::after {
+    content: '';
+    position: absolute;
+    top: -25mm;
+    right: -20mm;
+    width: 80mm;
+    height: 80mm;
+    background: radial-gradient(circle, rgba(255,87,35,.18), transparent 65%);
+    pointer-events: none;
+  }
+
+  .fb-label {
+    position: relative;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 4mm;
+  }
+
+  .fb-title {
+    position: relative;
+    font-size: 18pt;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: #fff;
+    margin-bottom: 7mm;
+  }
+
+  /* Services list */
+  .fb-services {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4mm;
+    margin-bottom: 6mm;
+  }
+
+  .fb-service {
+    display: flex;
+    gap: 3mm;
+    align-items: flex-start;
+  }
+
+  .fb-service-icon {
+    flex-shrink: 0;
+    width: 7mm;
+    height: 7mm;
+    border-radius: 2mm;
+    background: rgba(255,87,35,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FF5723;
+  }
+
+  .fb-service-text {
+    flex: 1;
+  }
+
+  .fb-service-title {
+    font-size: 9.5pt;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: #fff;
+    margin-bottom: 1mm;
+  }
+
+  .fb-service-desc {
+    font-size: 7.5pt;
+    line-height: 1.5;
+    color: rgba(242,242,242,.6);
+  }
+
+  /* Steps */
+  .fb-steps {
+    position: relative;
+    margin-top: 4mm;
+    margin-bottom: auto;
+  }
+
+  .fb-steps-title {
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 3mm;
+  }
+
+  .fb-steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+  }
+
+  .fb-step {
+    display: flex;
+    gap: 3mm;
+    align-items: center;
+    font-size: 8pt;
+    color: rgba(242,242,242,.75);
+  }
+
+  .fb-step-num {
+    flex-shrink: 0;
+    width: 5mm;
+    height: 5mm;
+    border-radius: 50%;
+    border: 1px solid rgba(255,87,35,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6.5pt;
+    font-weight: 700;
+    color: #FF5723;
+  }
+
+  /* Footer with QR */
+  .fb-footer {
+    position: relative;
+    margin-top: 8mm;
+    padding-top: 5mm;
+    border-top: 1px solid rgba(255,255,255,.10);
+    display: flex;
+    align-items: center;
+    gap: 5mm;
+  }
+
+  .fb-qr {
+    flex-shrink: 0;
+    width: 22mm;
+    height: 22mm;
+    background: #fff;
+    padding: 1.5mm;
+    border-radius: 1.5mm;
+  }
+
+  .fb-qr img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .fb-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2mm;
+    flex: 1;
+  }
+
+  .fb-contact-headline {
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 0.5mm;
+  }
+
+  .fb-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    font-size: 7.5pt;
+    color: rgba(242,242,242,.8);
+    font-weight: 500;
+  }
+
+  .fb-contact-item svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  /* Print */
+  @media print {
+    body { background: #fff; }
+    .sheet { page-break-after: always; }
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HOJA 1 — FRENTE (3 flyers iguales)
+═══════════════════════════════════════════════════════════ -->
+<div class="sheet">
+
+  <!-- ▼▼ Plantilla front replicada ×3 ▼▼ -->
+  <!-- FLYER FRONT -->
+  <div class="flyer-wrap"><span class="crop-mark tr"></span><span class="crop-mark bl"></span>
+  <div class="flyer flyer-front">
+    <div class="ff-header">
+      <svg width="32" height="25" viewBox="0 0 52 40" fill="none">
+        <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+        <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+        <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+        <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+      </svg>
+      <span class="ff-wm">Itera</span>
+    </div>
+    <div class="ff-label">Tecnología · Diseño · IA</div>
+    <h1 class="ff-hero-title">Tu negocio,<br>con la <span>tecnología</span> que necesita.</h1>
+    <p class="ff-hero-desc">
+      Hacemos páginas web, aplicaciones y software a medida para que tu trabajo sea más simple, vendas más y no pierdas tiempo con tareas repetitivas.
+    </p>
+    <div class="ff-tags">
+      <div class="ff-tag">Páginas web</div>
+      <div class="ff-tag">Apps a medida</div>
+      <div class="ff-tag">Automatización</div>
+      <div class="ff-tag">Inteligencia artificial</div>
+    </div>
+    <div class="ff-cta">
+      <div class="ff-cta-text">Conocé más<br>en la web →</div>
+      <div class="ff-cta-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- FLYER FRONT -->
+  <div class="flyer-wrap"><span class="crop-mark tr"></span><span class="crop-mark bl"></span>
+  <div class="flyer flyer-front">
+    <div class="ff-header">
+      <svg width="32" height="25" viewBox="0 0 52 40" fill="none">
+        <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+        <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+        <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+        <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+      </svg>
+      <span class="ff-wm">Itera</span>
+    </div>
+    <div class="ff-label">Tecnología · Diseño · IA</div>
+    <h1 class="ff-hero-title">Tu negocio,<br>con la <span>tecnología</span> que necesita.</h1>
+    <p class="ff-hero-desc">
+      Hacemos páginas web, aplicaciones y software a medida para que tu trabajo sea más simple, vendas más y no pierdas tiempo con tareas repetitivas.
+    </p>
+    <div class="ff-tags">
+      <div class="ff-tag">Páginas web</div>
+      <div class="ff-tag">Apps a medida</div>
+      <div class="ff-tag">Automatización</div>
+      <div class="ff-tag">Inteligencia artificial</div>
+    </div>
+    <div class="ff-cta">
+      <div class="ff-cta-text">Conocé más<br>en la web →</div>
+      <div class="ff-cta-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- FLYER FRONT -->
+  <div class="flyer-wrap"><span class="crop-mark tr"></span><span class="crop-mark bl"></span>
+  <div class="flyer flyer-front">
+    <div class="ff-header">
+      <svg width="32" height="25" viewBox="0 0 52 40" fill="none">
+        <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+        <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+        <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+        <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+      </svg>
+      <span class="ff-wm">Itera</span>
+    </div>
+    <div class="ff-label">Tecnología · Diseño · IA</div>
+    <h1 class="ff-hero-title">Tu negocio,<br>con la <span>tecnología</span> que necesita.</h1>
+    <p class="ff-hero-desc">
+      Hacemos páginas web, aplicaciones y software a medida para que tu trabajo sea más simple, vendas más y no pierdas tiempo con tareas repetitivas.
+    </p>
+    <div class="ff-tags">
+      <div class="ff-tag">Páginas web</div>
+      <div class="ff-tag">Apps a medida</div>
+      <div class="ff-tag">Automatización</div>
+      <div class="ff-tag">Inteligencia artificial</div>
+    </div>
+    <div class="ff-cta">
+      <div class="ff-cta-text">Conocé más<br>en la web →</div>
+      <div class="ff-cta-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  </div></div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HOJA 2 — DORSO (3 flyers iguales)
+═══════════════════════════════════════════════════════════ -->
+<div class="sheet">
+
+  <!-- FLYER BACK -->
+  <div class="flyer-wrap"><span class="crop-mark tr"></span><span class="crop-mark bl"></span>
+  <div class="flyer flyer-back">
+    <div class="fb-label">Lo que hacemos</div>
+    <h2 class="fb-title">Tres formas<br>de ayudarte<br>a crecer.</h2>
+
+    <div class="fb-services">
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Sitios web y tiendas online</div>
+          <div class="fb-service-desc">Páginas modernas, rápidas y fáciles de usar. Pensadas para que tus clientes te encuentren y te elijan.</div>
+        </div>
+      </div>
+
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Sistemas para tu negocio</div>
+          <div class="fb-service-desc">Gestión de ventas, stock, clientes y finanzas. Todo en un solo lugar, accesible desde cualquier dispositivo.</div>
+        </div>
+      </div>
+
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Inteligencia artificial aplicada</div>
+          <div class="fb-service-desc">Automatizamos tareas, respondemos consultas y analizamos datos. La IA trabajando para vos, sin complicaciones.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-steps">
+      <div class="fb-steps-title">Cómo trabajamos</div>
+      <div class="fb-steps-list">
+        <div class="fb-step"><div class="fb-step-num">1</div>Te escuchamos y entendemos tu negocio</div>
+        <div class="fb-step"><div class="fb-step-num">2</div>Diseñamos la solución a tu medida</div>
+        <div class="fb-step"><div class="fb-step-num">3</div>Construimos, probamos y mejoramos</div>
+        <div class="fb-step"><div class="fb-step-num">4</div>Lanzamos y seguimos cerca para crecer juntos</div>
+      </div>
+    </div>
+
+    <div class="fb-footer">
+      <div class="fb-qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/>
+      </div>
+      <div class="fb-contact">
+        <div class="fb-contact-headline">Hablemos</div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          3467443669
+        </div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          hola@itera.com
+        </div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          weareitera.com
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- FLYER BACK -->
+  <div class="flyer-wrap"><span class="crop-mark tr"></span><span class="crop-mark bl"></span>
+  <div class="flyer flyer-back">
+    <div class="fb-label">Lo que hacemos</div>
+    <h2 class="fb-title">Tres formas<br>de ayudarte<br>a crecer.</h2>
+
+    <div class="fb-services">
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Sitios web y tiendas online</div>
+          <div class="fb-service-desc">Páginas modernas, rápidas y fáciles de usar. Pensadas para que tus clientes te encuentren y te elijan.</div>
+        </div>
+      </div>
+
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Sistemas para tu negocio</div>
+          <div class="fb-service-desc">Gestión de ventas, stock, clientes y finanzas. Todo en un solo lugar, accesible desde cualquier dispositivo.</div>
+        </div>
+      </div>
+
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Inteligencia artificial aplicada</div>
+          <div class="fb-service-desc">Automatizamos tareas, respondemos consultas y analizamos datos. La IA trabajando para vos, sin complicaciones.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-steps">
+      <div class="fb-steps-title">Cómo trabajamos</div>
+      <div class="fb-steps-list">
+        <div class="fb-step"><div class="fb-step-num">1</div>Te escuchamos y entendemos tu negocio</div>
+        <div class="fb-step"><div class="fb-step-num">2</div>Diseñamos la solución a tu medida</div>
+        <div class="fb-step"><div class="fb-step-num">3</div>Construimos, probamos y mejoramos</div>
+        <div class="fb-step"><div class="fb-step-num">4</div>Lanzamos y seguimos cerca para crecer juntos</div>
+      </div>
+    </div>
+
+    <div class="fb-footer">
+      <div class="fb-qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/>
+      </div>
+      <div class="fb-contact">
+        <div class="fb-contact-headline">Hablemos</div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          3467443669
+        </div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          hola@itera.com
+        </div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          weareitera.com
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- FLYER BACK -->
+  <div class="flyer-wrap"><span class="crop-mark tr"></span><span class="crop-mark bl"></span>
+  <div class="flyer flyer-back">
+    <div class="fb-label">Lo que hacemos</div>
+    <h2 class="fb-title">Tres formas<br>de ayudarte<br>a crecer.</h2>
+
+    <div class="fb-services">
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Sitios web y tiendas online</div>
+          <div class="fb-service-desc">Páginas modernas, rápidas y fáciles de usar. Pensadas para que tus clientes te encuentren y te elijan.</div>
+        </div>
+      </div>
+
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Sistemas para tu negocio</div>
+          <div class="fb-service-desc">Gestión de ventas, stock, clientes y finanzas. Todo en un solo lugar, accesible desde cualquier dispositivo.</div>
+        </div>
+      </div>
+
+      <div class="fb-service">
+        <div class="fb-service-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="fb-service-text">
+          <div class="fb-service-title">Inteligencia artificial aplicada</div>
+          <div class="fb-service-desc">Automatizamos tareas, respondemos consultas y analizamos datos. La IA trabajando para vos, sin complicaciones.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-steps">
+      <div class="fb-steps-title">Cómo trabajamos</div>
+      <div class="fb-steps-list">
+        <div class="fb-step"><div class="fb-step-num">1</div>Te escuchamos y entendemos tu negocio</div>
+        <div class="fb-step"><div class="fb-step-num">2</div>Diseñamos la solución a tu medida</div>
+        <div class="fb-step"><div class="fb-step-num">3</div>Construimos, probamos y mejoramos</div>
+        <div class="fb-step"><div class="fb-step-num">4</div>Lanzamos y seguimos cerca para crecer juntos</div>
+      </div>
+    </div>
+
+    <div class="fb-footer">
+      <div class="fb-qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR"/>
+      </div>
+      <div class="fb-contact">
+        <div class="fb-contact-headline">Hablemos</div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          3467443669
+        </div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          hola@itera.com
+        </div>
+        <div class="fb-contact-item">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          weareitera.com
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Itera — Instagram Carousel</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #E8E8E8;
+    -webkit-font-smoothing: antialiased;
+    padding: 100px 40px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 80px;
+  }
+
+  /* Toolbar fija arriba */
+  .toolbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #111214;
+    color: #fff;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  }
+  .toolbar-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .toolbar-title span { color: #FF5723; }
+  .btn {
+    background: #FF5723;
+    color: #fff;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: transform .15s, opacity .15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn.secondary {
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.12);
+  }
+
+  /* Wrapper de cada slide con su botón */
+  .slide-wrap {
+    position: relative;
+  }
+  .slide-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 0;
+  }
+  .slide-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #555;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-right: 12px;
+  }
+  .status {
+    font-size: 13px;
+    color: #555;
+    font-weight: 500;
+  }
+  @media print { .toolbar, .slide-actions { display: none; } }
+
+  /* Instagram 4:5 — 1080×1350 px */
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    background: #111214;
+    position: relative;
+    overflow: hidden;
+    color: #F2F2F2;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Grid pattern background */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.028) 1px, transparent 1px);
+    background-size: 70px 70px;
+    pointer-events: none;
+  }
+
+  /* Orange glow varies by slide */
+  .slide::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* Common header & footer */
+  .slide-header {
+    position: relative;
+    padding: 60px 80px 50px;
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    z-index: 2;
+  }
+
+  .iso-svg {
+    width: 60px;
+    height: 47px;
+  }
+
+  .wm {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: #F2F2F2;
+  }
+
+  .slide-footer {
+    position: relative;
+    padding: 0 80px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2;
+    margin-top: auto;
+  }
+
+  .footer-handle {
+    font-size: 22px;
+    font-weight: 700;
+    color: rgba(242,242,242,.55);
+    letter-spacing: 0.02em;
+  }
+
+  .footer-page {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #FF5723;
+  }
+
+  /* Body container */
+  .slide-body {
+    position: relative;
+    padding: 60px 80px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  /* Label uppercase */
+  .label {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 28px;
+  }
+
+  /* ═════════════════════ SLIDE 1 — PRESENTACIÓN ═════════════════════ */
+  .slide-1::after {
+    top: -200px;
+    right: -150px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(255,87,35,.30), transparent 65%);
+  }
+
+  .s1-title {
+    font-size: 110px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: #fff;
+    margin-bottom: 40px;
+  }
+
+  .s1-title span { color: #FF5723; }
+
+  .s1-desc {
+    font-size: 32px;
+    line-height: 1.4;
+    color: rgba(242,242,242,.75);
+    max-width: 800px;
+    font-weight: 500;
+  }
+
+  .s1-arrow {
+    position: absolute;
+    bottom: 140px;
+    right: 80px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #FF5723;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  /* ═════════════════════ SLIDE 2 — SERVICIOS ═════════════════════ */
+  .slide-2::after {
+    top: -100px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,87,35,.20), transparent 65%);
+  }
+
+  .s2-title {
+    font-size: 78px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 50px;
+  }
+
+  .s2-title span { color: #FF5723; }
+
+  .s2-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .s2-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 24px;
+    padding: 36px 40px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+  }
+
+  .s2-card-icon {
+    flex-shrink: 0;
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    background: rgba(255,87,35,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FF5723;
+  }
+
+  .s2-card-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .s2-card-desc {
+    font-size: 20px;
+    line-height: 1.45;
+    color: rgba(242,242,242,.65);
+  }
+
+  /* ═════════════════════ SLIDE 3 — PROCESOS ═════════════════════ */
+  .slide-3::after {
+    bottom: -150px;
+    right: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,87,35,.22), transparent 65%);
+  }
+
+  .s3-title {
+    font-size: 84px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 60px;
+  }
+
+  .s3-title span { color: #FF5723; }
+
+  .s3-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .s3-step {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .s3-step-num {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,87,35,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: #FF5723;
+    background: rgba(255,87,35,.08);
+  }
+
+  .s3-step-text {
+    flex: 1;
+  }
+
+  .s3-step-title {
+    font-size: 30px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  .s3-step-desc {
+    font-size: 20px;
+    line-height: 1.4;
+    color: rgba(242,242,242,.6);
+  }
+
+  /* ═════════════════════ SLIDE 4 — CTA + QR ═════════════════════ */
+  .slide-4::after {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 900px;
+    background: radial-gradient(circle, rgba(255,87,35,.18), transparent 60%);
+  }
+
+  .slide-4 .slide-body {
+    align-items: center;
+    text-align: center;
+  }
+
+  .s4-tagline {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #FF5723;
+    margin-bottom: 40px;
+  }
+
+  .s4-title {
+    font-size: 96px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 50px;
+    max-width: 900px;
+  }
+
+  .s4-title span { color: #FF5723; }
+
+  .s4-desc {
+    font-size: 28px;
+    line-height: 1.5;
+    color: rgba(242,242,242,.75);
+    max-width: 720px;
+    margin-bottom: 60px;
+    font-weight: 500;
+  }
+
+  .s4-qr-wrap {
+    background: #fff;
+    padding: 24px;
+    border-radius: 28px;
+    width: 320px;
+    height: 320px;
+    margin-bottom: 36px;
+  }
+
+  .s4-qr-wrap img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .s4-url {
+    font-size: 30px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+
+  .s4-handle {
+    font-size: 22px;
+    font-weight: 600;
+    color: rgba(242,242,242,.55);
+  }
+
+  /* Common iso svg */
+  .iso {
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="toolbar-title">Itera <span>·</span> Instagram Carousel <span>·</span> 1080×1350</div>
+  <div style="display:flex;gap:16px;align-items:center">
+    <span id="status" class="status" style="color:#aaa">4 slides listas</span>
+    <button id="btn-all" class="btn">Descargar todas (PNG)</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 1 — PRESENTACIÓN
+═══════════════════════════════════════════════════════════ -->
+<div class="slide-wrap"><div class="slide-actions"><span class="slide-label">Slide 1</span><button class="btn" data-export="1">Descargar PNG</button></div>
+<div class="slide slide-1" data-name="itera-ig-01">
+  <div class="slide-header">
+    <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+      <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+      <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+      <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+      <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+    </svg>
+    <span class="wm">Itera</span>
+  </div>
+  <div class="slide-body">
+    <div class="label">Hola, somos Itera</div>
+    <h1 class="s1-title">Tecnología<br>para evolucionar<br><span>negocios.</span></h1>
+    <p class="s1-desc">Hacemos páginas web, aplicaciones y sistemas a medida para que tu trabajo sea más simple y tu negocio crezca con claridad.</p>
+  </div>
+  <div class="s1-arrow">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14M13 5l7 7-7 7"/>
+    </svg>
+  </div>
+  <div class="slide-footer">
+    <div class="footer-handle">@weareitera</div>
+    <div class="footer-page">01 / 04</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 2 — SERVICIOS
+═══════════════════════════════════════════════════════════ -->
+</div>
+<div class="slide-wrap"><div class="slide-actions"><span class="slide-label">Slide 2</span><button class="btn" data-export="2">Descargar PNG</button></div>
+<div class="slide slide-2" data-name="itera-ig-02">
+  <div class="slide-header">
+    <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+      <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+      <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+      <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+      <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+    </svg>
+    <span class="wm">Itera</span>
+  </div>
+  <div class="slide-body">
+    <div class="label">Lo que hacemos</div>
+    <h2 class="s2-title">Tres formas<br>de ayudarte<br>a <span>crecer.</span></h2>
+    <div class="s2-grid">
+      <div class="s2-card">
+        <div class="s2-card-icon">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div>
+          <div class="s2-card-title">Sitios web y tiendas online</div>
+          <div class="s2-card-desc">Páginas modernas, rápidas y fáciles de usar. Pensadas para que te encuentren y te elijan.</div>
+        </div>
+      </div>
+      <div class="s2-card">
+        <div class="s2-card-icon">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+        </div>
+        <div>
+          <div class="s2-card-title">Sistemas para tu negocio</div>
+          <div class="s2-card-desc">Gestión de ventas, stock, clientes y finanzas. Todo en un solo lugar, desde cualquier dispositivo.</div>
+        </div>
+      </div>
+      <div class="s2-card">
+        <div class="s2-card-icon">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <div class="s2-card-title">Inteligencia artificial aplicada</div>
+          <div class="s2-card-desc">Automatizamos tareas, respondemos consultas y analizamos datos. IA trabajando para vos.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="footer-handle">@weareitera</div>
+    <div class="footer-page">02 / 04</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 3 — PROCESOS
+═══════════════════════════════════════════════════════════ -->
+</div>
+<div class="slide-wrap"><div class="slide-actions"><span class="slide-label">Slide 3</span><button class="btn" data-export="3">Descargar PNG</button></div>
+<div class="slide slide-3" data-name="itera-ig-03">
+  <div class="slide-header">
+    <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+      <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+      <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+      <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+      <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+    </svg>
+    <span class="wm">Itera</span>
+  </div>
+  <div class="slide-body">
+    <div class="label">Cómo trabajamos</div>
+    <h2 class="s3-title">De la idea<br>al resultado<br>en <span>4 pasos.</span></h2>
+    <div class="s3-steps">
+      <div class="s3-step">
+        <div class="s3-step-num">1</div>
+        <div class="s3-step-text">
+          <div class="s3-step-title">Te escuchamos</div>
+          <div class="s3-step-desc">Entendemos tu negocio y tus objetivos reales.</div>
+        </div>
+      </div>
+      <div class="s3-step">
+        <div class="s3-step-num">2</div>
+        <div class="s3-step-text">
+          <div class="s3-step-title">Diseñamos la solución</div>
+          <div class="s3-step-desc">Pensada a tu medida, sin complicaciones innecesarias.</div>
+        </div>
+      </div>
+      <div class="s3-step">
+        <div class="s3-step-num">3</div>
+        <div class="s3-step-text">
+          <div class="s3-step-title">Construimos y probamos</div>
+          <div class="s3-step-desc">Iteramos con vos hasta que todo funcione como esperás.</div>
+        </div>
+      </div>
+      <div class="s3-step">
+        <div class="s3-step-num">4</div>
+        <div class="s3-step-text">
+          <div class="s3-step-title">Lanzamos y crecemos juntos</div>
+          <div class="s3-step-desc">Te acompañamos para mejorar y escalar con el tiempo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="footer-handle">@weareitera</div>
+    <div class="footer-page">03 / 04</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 4 — CTA + QR
+═══════════════════════════════════════════════════════════ -->
+</div>
+<div class="slide-wrap"><div class="slide-actions"><span class="slide-label">Slide 4</span><button class="btn" data-export="4">Descargar PNG</button></div>
+<div class="slide slide-4" data-name="itera-ig-04">
+  <div class="slide-header">
+    <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+      <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+      <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+      <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+      <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+    </svg>
+    <span class="wm">Itera</span>
+  </div>
+  <div class="slide-body">
+    <div class="s4-tagline">Hablemos</div>
+    <h2 class="s4-title">¿Listo para<br><span>evolucionar?</span></h2>
+    <p class="s4-desc">Escaneá el QR o visitá nuestra web. Conversemos sobre tu próximo proyecto.</p>
+    <div class="s4-qr-wrap">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=https://weareitera.com&bgcolor=ffffff&color=111214&qzone=1" alt="QR weareitera.com"/>
+    </div>
+    <div class="s4-url">weareitera.com</div>
+    <div class="s4-handle">@weareitera</div>
+  </div>
+  <div class="slide-footer">
+    <div class="footer-handle">hola@itera.com</div>
+    <div class="footer-page">04 / 04</div>
+  </div>
+</div>
+</div>
+
+<script>
+  const QR_PROXY = (url) => url; // sin proxy, hay que esperar que cargue
+
+  // Pre-convierte imágenes externas (QR) a base64 para evitar problemas de CORS
+  async function inlineExternalImages() {
+    const imgs = document.querySelectorAll('img');
+    await Promise.all([...imgs].map(async (img) => {
+      if (img.src.startsWith('data:')) return;
+      try {
+        const res = await fetch(img.src, { mode: 'cors' });
+        const blob = await res.blob();
+        const dataUrl = await new Promise((r) => {
+          const fr = new FileReader();
+          fr.onload = () => r(fr.result);
+          fr.readAsDataURL(blob);
+        });
+        img.src = dataUrl;
+      } catch (e) {
+        console.warn('No se pudo inlinear imagen', img.src, e);
+      }
+    }));
+  }
+  let imagesInlined = false;
+
+  async function exportSlide(slideEl, name) {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    if (!imagesInlined) { await inlineExternalImages(); imagesInlined = true; }
+
+    const canvas = await html2canvas(slideEl, {
+      width: 1080,
+      height: 1350,
+      scale: 2,           // 2160×2700 final, super nítido
+      useCORS: true,
+      backgroundColor: null,
+      logging: false,
+      allowTaint: false,
+    });
+
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${name}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function setStatus(msg) {
+    document.getElementById('status').textContent = msg;
+  }
+
+  async function exportOne(n) {
+    const slide = document.querySelector(`.slide-${n}`);
+    const name = slide.dataset.name;
+    setStatus(`Exportando slide ${n}...`);
+    await exportSlide(slide, name);
+    setStatus(`✓ ${name}.png descargado`);
+  }
+
+  async function exportAll() {
+    const slides = document.querySelectorAll('.slide');
+    for (let i = 0; i < slides.length; i++) {
+      setStatus(`Exportando ${i + 1}/${slides.length}...`);
+      await exportSlide(slides[i], slides[i].dataset.name);
+      // Pequeña pausa para que el navegador procese cada descarga
+      await new Promise((r) => setTimeout(r, 400));
+    }
+    setStatus(`✓ ${slides.length} slides descargados`);
+  }
+
+  document.querySelectorAll('[data-export]').forEach((btn) => {
+    btn.addEventListener('click', () => exportOne(btn.dataset.export));
+  });
+  document.getElementById('btn-all').addEventListener('click', exportAll);
+</script>
+
+</body>
+</html>

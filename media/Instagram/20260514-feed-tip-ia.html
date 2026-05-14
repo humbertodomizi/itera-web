@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Itera — Feed · Tip IA · 14/05/2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #E8E8E8;
+    -webkit-font-smoothing: antialiased;
+    padding: 100px 40px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 80px;
+  }
+
+  .toolbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111214; color: #fff;
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  }
+  .toolbar-title { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+  .toolbar-title span { color: #FF5723; }
+
+  .btn {
+    background: #FF5723; color: #fff; border: none;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    padding: 10px 20px; border-radius: 8px; cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: transform .15s, opacity .15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .slide-wrap { position: relative; }
+  .slide-actions {
+    display: flex; gap: 8px; align-items: center;
+    justify-content: flex-end; padding: 12px 0;
+  }
+  .slide-label {
+    font-size: 14px; font-weight: 700; color: #555;
+    letter-spacing: 0.05em; text-transform: uppercase; margin-right: 12px;
+  }
+  .status { font-size: 13px; color: #555; font-weight: 500; }
+  @media print { .toolbar, .slide-actions { display: none; } }
+
+  /* ─── Slide base ─── */
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    background: #111214;
+    position: relative; overflow: hidden;
+    color: #F2F2F2;
+    display: flex; flex-direction: column;
+  }
+
+  /* Grid */
+  .slide::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.028) 1px, transparent 1px);
+    background-size: 70px 70px;
+    pointer-events: none;
+  }
+
+  /* Glow naranja top-left */
+  .slide::after {
+    content: ''; position: absolute;
+    top: -120px; left: -180px;
+    width: 750px; height: 750px;
+    background: radial-gradient(circle, rgba(255,87,35,.26), transparent 62%);
+    pointer-events: none;
+  }
+
+  /* Header */
+  .slide-header {
+    position: relative;
+    padding: 60px 80px 50px;
+    display: flex; align-items: flex-end; gap: 14px;
+    z-index: 2;
+  }
+  .iso-svg { width: 60px; height: 47px; }
+  .wm {
+    font-size: 38px; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1; color: #F2F2F2;
+  }
+
+  /* Body */
+  .slide-body {
+    position: relative;
+    padding: 0 80px 0;
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+    gap: 0;
+  }
+
+  .eyebrow {
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: #FF5723; margin-bottom: 28px;
+  }
+
+  .hero-title {
+    font-size: 104px; font-weight: 800;
+    letter-spacing: -0.04em; line-height: 0.94;
+    color: #fff; margin-bottom: 52px;
+  }
+  .hero-title span { color: #FF5723; }
+
+  /* Items de tip */
+  .tip-list {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+
+  .tip-item {
+    display: flex; align-items: flex-start; gap: 24px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 20px;
+    padding: 28px 32px;
+  }
+
+  .tip-icon {
+    flex-shrink: 0;
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: rgba(255,87,35,.14);
+    display: flex; align-items: center; justify-content: center;
+    color: #FF5723;
+  }
+
+  .tip-text { flex: 1; }
+
+  .tip-title {
+    font-size: 26px; font-weight: 800;
+    letter-spacing: -0.02em; color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .tip-desc {
+    font-size: 19px; line-height: 1.42;
+    color: rgba(242,242,242,.62);
+    font-weight: 500;
+  }
+
+  /* Footer */
+  .slide-footer {
+    position: relative;
+    padding: 0 80px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 2; margin-top: 48px;
+  }
+  .footer-handle {
+    font-size: 22px; font-weight: 700;
+    color: rgba(242,242,242,.50); letter-spacing: 0.02em;
+  }
+  .footer-tag {
+    font-size: 17px; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: #FF5723;
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="toolbar-title">Itera <span>·</span> Feed Placa Única <span>·</span> 1080×1350 <span>·</span> 14/05/2026</div>
+  <div style="display:flex;gap:16px;align-items:center">
+    <span id="status" class="status">1 slide lista</span>
+    <button id="btn-all" class="btn">Descargar PNG</button>
+  </div>
+</div>
+
+<div class="slide-wrap">
+  <div class="slide-actions">
+    <span class="slide-label">Tip IA</span>
+    <button class="btn" data-export="1">Descargar PNG</button>
+  </div>
+  <div class="slide slide-1" data-name="itera-ig-tip-ia-20260514">
+
+    <div class="slide-header">
+      <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+        <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+        <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+        <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+        <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+      </svg>
+      <span class="wm">Itera</span>
+    </div>
+
+    <div class="slide-body">
+      <div class="eyebrow">IA para tu negocio</div>
+      <h1 class="hero-title">3 cosas que<br>la IA puede<br>hacer<br><span>por vos.</span></h1>
+
+      <div class="tip-list">
+        <div class="tip-item">
+          <div class="tip-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="tip-text">
+            <div class="tip-title">Atender consultas 24/7</div>
+            <div class="tip-desc">Un asistente que responde al instante, sin que vos tengas que estar.</div>
+          </div>
+        </div>
+
+        <div class="tip-item">
+          <div class="tip-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="tip-text">
+            <div class="tip-title">Analizar datos del negocio</div>
+            <div class="tip-desc">Detecta patrones en ventas, clientes y operaciones en segundos.</div>
+          </div>
+        </div>
+
+        <div class="tip-item">
+          <div class="tip-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+            </svg>
+          </div>
+          <div class="tip-text">
+            <div class="tip-title">Automatizar tareas repetitivas</div>
+            <div class="tip-desc">Liberá tiempo del equipo para lo que realmente importa.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-handle">@weareitera</div>
+      <div class="footer-tag">weareitera.com</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  async function inlineExternalImages() {
+    const imgs = document.querySelectorAll('img');
+    await Promise.all([...imgs].map(async (img) => {
+      if (img.src.startsWith('data:')) return;
+      try {
+        const res = await fetch(img.src, { mode: 'cors' });
+        const blob = await res.blob();
+        const dataUrl = await new Promise((r) => {
+          const fr = new FileReader();
+          fr.onload = () => r(fr.result);
+          fr.readAsDataURL(blob);
+        });
+        img.src = dataUrl;
+      } catch (e) { console.warn('No se pudo inlinear imagen', img.src, e); }
+    }));
+  }
+  let imagesInlined = false;
+
+  async function exportSlide(slideEl, name) {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    if (!imagesInlined) { await inlineExternalImages(); imagesInlined = true; }
+    const canvas = await html2canvas(slideEl, {
+      width: 1080,
+      height: 1350,
+      scale: 2,
+      useCORS: true,
+      backgroundColor: null,
+      logging: false,
+      allowTaint: false,
+    });
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${name}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function setStatus(msg) { document.getElementById('status').textContent = msg; }
+
+  async function exportOne(n) {
+    const slide = document.querySelector(`.slide-${n}`);
+    setStatus('Exportando...');
+    await exportSlide(slide, slide.dataset.name);
+    setStatus(`✓ ${slide.dataset.name}.png descargado`);
+  }
+
+  document.querySelectorAll('[data-export]').forEach((btn) => {
+    btn.addEventListener('click', () => exportOne(btn.dataset.export));
+  });
+  document.getElementById('btn-all').addEventListener('click', () => exportOne(1));
+</script>
+</body>
+</html>

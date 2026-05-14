@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Itera — Carrusel Feed · PymesApp · 14/05/2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #E8E8E8;
+    -webkit-font-smoothing: antialiased;
+    padding: 100px 40px 80px;
+    display: flex; flex-direction: column; align-items: center; gap: 80px;
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111214; color: #fff;
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0,0,0,.20);
+  }
+  .toolbar-title { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+  .toolbar-title span { color: #FF5723; }
+  .btn {
+    background: #FF5723; color: #fff; border: none;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    padding: 10px 20px; border-radius: 8px; cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: transform .15s, opacity .15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .slide-wrap { position: relative; }
+  .slide-actions {
+    display: flex; gap: 8px; align-items: center;
+    justify-content: flex-end; padding: 12px 0;
+  }
+  .slide-label {
+    font-size: 14px; font-weight: 700; color: #555;
+    letter-spacing: 0.05em; text-transform: uppercase; margin-right: 12px;
+  }
+  .status { font-size: 13px; color: #555; font-weight: 500; }
+  @media print { .toolbar, .slide-actions { display: none; } }
+
+  /* ══════════════════════ ISOTIPO PYMESAPP REAL ══════════════════════ */
+  /* 3 rects + 1 cuarto de círculo amarillo. viewBox 0 0 180 180 */
+  .pa-iso-fill-ink rect { fill: #0a0a0a; }
+  .pa-iso-fill-ink path { fill: #ECE209; }
+  .pa-iso-fill-white rect { fill: #FFFFFF; }
+  .pa-iso-fill-white path { fill: #ECE209; }
+
+  /* ── Slide base ── */
+  .slide {
+    width: 1080px; height: 1350px;
+    background: #111214;
+    position: relative; overflow: hidden;
+    color: #F2F2F2;
+    display: flex; flex-direction: column;
+  }
+  .slide::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.028) 1px, transparent 1px);
+    background-size: 70px 70px;
+    pointer-events: none; z-index: 0;
+  }
+  .slide::after { content: ''; position: absolute; pointer-events: none; z-index: 0; }
+
+  /* ── Header Itera ── */
+  .slide-header {
+    position: relative;
+    padding: 60px 80px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 2;
+  }
+  .header-left { display: flex; align-items: flex-end; gap: 14px; }
+  .iso-svg { width: 60px; height: 47px; }
+  .wm-itera {
+    font-size: 38px; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1; color: #F2F2F2;
+  }
+  .header-right {
+    display: flex; align-items: center; gap: 10px;
+  }
+  /* Logo PymesApp compacto (header) */
+  .pa-header-iso {
+    width: 32px; height: 32px;
+    border-radius: 7px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(236,226,9,.18);
+    padding: 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pa-header-wm {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 900; font-size: 22px;
+    letter-spacing: -0.03em; line-height: 1;
+    color: #fff;
+    display: flex; align-items: baseline;
+  }
+  .pa-header-wm .pa-app {
+    color: #0a0a0a; background: #ECE209;
+    padding: 1px 6px 3px; border-radius: 5px;
+    margin-left: 3px;
+  }
+
+  /* ── Footer ── */
+  .slide-footer {
+    position: relative;
+    padding: 0 80px 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 2; margin-top: auto;
+  }
+  .footer-handle {
+    font-size: 22px; font-weight: 700;
+    color: rgba(242,242,242,.50); letter-spacing: 0.02em;
+  }
+  .footer-page {
+    font-size: 18px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; color: #FF5723;
+  }
+
+  /* ── Body ── */
+  .slide-body {
+    position: relative;
+    padding: 0 80px;
+    flex: 1; display: flex; flex-direction: column;
+    z-index: 2;
+    padding-bottom: 20px;
+  }
+  .eyebrow {
+    font-size: 22px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: #FF5723; margin-bottom: 28px;
+  }
+
+  /* ═════════ SLIDE 1 — PRESENTACIÓN ═════════ */
+  .slide-1::after {
+    top: -160px; right: -180px;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(255,87,35,.28), transparent 62%);
+  }
+  .slide-1::before {
+    content: ''; position: absolute;
+    bottom: -200px; left: -150px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(236,226,9,.10), transparent 62%);
+    z-index: 0;
+  }
+  .slide-1 .slide-body { justify-content: center; }
+  .s1-title {
+    font-size: 98px; font-weight: 800;
+    letter-spacing: -0.04em; line-height: 0.93;
+    color: #fff; margin-bottom: 38px;
+  }
+  .s1-title span { color: #FF5723; }
+  .s1-desc {
+    font-size: 28px; line-height: 1.42;
+    color: rgba(242,242,242,.68);
+    max-width: 820px; font-weight: 500;
+    margin-bottom: 48px;
+  }
+  .s1-logo-card {
+    display: flex; align-items: center; gap: 22px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(236,226,9,.30);
+    border-radius: 22px;
+    padding: 22px 32px;
+    width: fit-content;
+    box-shadow: 0 8px 32px rgba(236,226,9,.10);
+  }
+  .s1-logo-isotipo {
+    width: 64px; height: 64px;
+  }
+  .s1-logo-wm {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 900; font-size: 44px;
+    letter-spacing: -0.03em; line-height: 1;
+    color: #fff;
+    display: flex; align-items: baseline;
+  }
+  .s1-logo-wm .pa-app {
+    color: #0a0a0a; background: #ECE209;
+    padding: 3px 12px 5px; border-radius: 9px;
+    margin-left: 6px;
+  }
+  .s1-by {
+    margin-top: 14px;
+    font-size: 14px; font-weight: 600;
+    color: rgba(242,242,242,.40); letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .s1-by span { color: #FF5723; font-weight: 800; }
+  .s1-arrow {
+    position: absolute;
+    bottom: 130px; right: 80px;
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: #FF5723;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 3;
+    box-shadow: 0 14px 40px rgba(255,87,35,.5);
+  }
+
+  /* ═════════ SLIDE 2 — DASHBOARD FINANZAS ═════════ */
+  .slide-2::after {
+    bottom: -200px; left: -160px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(236,226,9,.14), transparent 62%);
+  }
+  .s2-title {
+    font-size: 64px; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1;
+    color: #fff; margin-bottom: 24px;
+  }
+  .s2-title span { color: #ECE209; }
+
+  /* ─── Mock dashboard ─── */
+  .db-mock {
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(236,226,9,.20);
+    box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.05);
+    flex: 1;
+    display: flex; flex-direction: column;
+    min-height: 0;
+  }
+  /* Browser chrome */
+  .db-chrome {
+    background: #f4f4f2;
+    padding: 12px 18px;
+    display: flex; align-items: center; gap: 9px;
+    border-bottom: 1px solid #ececec;
+  }
+  .db-chrome-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .db-chrome-bar {
+    flex: 1; height: 22px;
+    background: #fff; border-radius: 6px;
+    margin: 0 14px; border: 1px solid #ececec;
+    display: flex; align-items: center; padding: 0 12px;
+    font-size: 11px; font-family: monospace; color: #8a8a8a;
+  }
+
+  /* Sidebar PymesApp */
+  .db-body { display: flex; flex: 1; min-height: 0; }
+  .db-sidebar {
+    width: 188px; background: #fff;
+    border-right: 1px solid #ececec;
+    padding: 14px 10px;
+    display: flex; flex-direction: column; gap: 3px;
+    flex-shrink: 0;
+  }
+  .db-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 8px 14px; margin-bottom: 8px;
+    border-bottom: 1px solid #f2f2f0;
+  }
+  .db-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #ECE209;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11px; font-weight: 900; color: #0a0a0a;
+    flex-shrink: 0;
+  }
+  .db-user-info { line-height: 1.25; min-width: 0; }
+  .db-user-name {
+    font-size: 12px; font-weight: 800; color: #0a0a0a;
+    letter-spacing: -0.01em;
+  }
+  .db-user-email {
+    font-size: 10px; color: #8a8a8a; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .db-brand-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 8px; margin-top: auto;
+    border-top: 1px solid #f2f2f0;
+  }
+  .db-brand-iso { width: 26px; height: 26px; flex-shrink: 0; }
+  .db-brand-name {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 15px; font-weight: 900;
+    color: #0a0a0a; letter-spacing: -0.02em;
+    display: flex; align-items: baseline;
+  }
+  .db-brand-name .pa-app {
+    background: #ECE209; color: #0a0a0a;
+    padding: 2px 5px 3px; border-radius: 5px;
+    margin-left: 3px; font-size: 13px;
+  }
+  .db-nav-section {
+    display: flex; flex-direction: column; gap: 3px;
+    flex: 1;
+  }
+  .db-nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 11px; border-radius: 9px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: #525252;
+  }
+  .db-nav-item.active {
+    background: rgba(236,226,9,.18);
+    color: #0a0a0a;
+    position: relative;
+  }
+  .db-nav-item.active::before {
+    content: ''; position: absolute; left: 0; top: 7px; bottom: 7px;
+    width: 3px; background: #ECE209; border-radius: 0 3px 3px 0;
+  }
+  .db-nav-icon { width: 15px; height: 15px; flex-shrink: 0; color: #525252; }
+  .db-nav-item.active .db-nav-icon { color: #0a0a0a; }
+
+  /* Main content */
+  .db-main {
+    flex: 1; background: #fafaf9;
+    display: flex; flex-direction: column;
+    min-width: 0;
+  }
+  .db-topbar {
+    background: #fff;
+    border-bottom: 1px solid #ececec;
+    padding: 14px 22px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .db-page-title {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 22px; font-weight: 900;
+    color: #0a0a0a; letter-spacing: -0.025em;
+  }
+  .db-topbar-actions { display: flex; gap: 10px; align-items: center; }
+  .db-btn-soft {
+    background: #fff; color: #525252;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    padding: 8px 14px; border-radius: 8px;
+    border: 1px solid #ececec;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .db-btn-yellow {
+    background: #ECE209; color: #0a0a0a;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 12.5px; font-weight: 800;
+    padding: 8px 15px; border-radius: 8px;
+    letter-spacing: -0.01em;
+    box-shadow: 0 2px 8px rgba(236,226,9,.30);
+  }
+  .db-content { padding: 20px; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .db-h1 {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 28px; font-weight: 900;
+    color: #0a0a0a; letter-spacing: -0.025em; margin-bottom: 6px;
+  }
+  .db-sub-desc {
+    font-size: 13px; color: #8a8a8a; font-weight: 600; margin-bottom: 16px;
+  }
+  .db-sub-desc .green { color: #16a34a; font-weight: 800; }
+  .db-sub-desc .red { color: #dc2626; font-weight: 800; }
+  .db-sub-desc .ink { color: #0a0a0a; font-weight: 800; }
+  .db-period-btns {
+    display: flex; gap: 7px; margin-bottom: 16px;
+  }
+  .db-period-btn {
+    font-size: 12px; font-weight: 700;
+    padding: 7px 14px; border-radius: 8px;
+    background: #fff; border: 1px solid #ececec;
+    color: #525252; cursor: default;
+  }
+  .db-period-btn.active {
+    background: #ECE209; color: #0a0a0a; border-color: #ECE209;
+    box-shadow: 0 2px 6px rgba(236,226,9,.30);
+  }
+  .db-kpis {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 11px; margin-bottom: 14px;
+  }
+  .db-kpi {
+    background: #fff; border: 1px solid #ececec;
+    border-radius: 12px; padding: 14px 16px;
+    box-shadow: 0 1px 2px rgba(10,10,10,.04);
+    position: relative;
+  }
+  .db-kpi-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 7px;
+  }
+  .db-kpi-lbl {
+    font-size: 9.5px; font-weight: 800; letter-spacing: .08em;
+    text-transform: uppercase; color: #8a8a8a;
+  }
+  .db-kpi-icon {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+  .db-kpi-icon.green { background: rgba(22,163,74,.12); color: #16a34a; }
+  .db-kpi-icon.red { background: rgba(220,38,38,.12); color: #dc2626; }
+  .db-kpi-icon.gray { background: #f4f4f2; color: #8a8a8a; }
+  .db-kpi-val {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 21px; font-weight: 900;
+    color: #0a0a0a; letter-spacing: -0.03em;
+    margin-bottom: 3px;
+  }
+  .db-kpi-val.green { color: #16a34a; }
+  .db-kpi-val.red { color: #dc2626; }
+  .db-kpi-sub { font-size: 10.5px; color: #8a8a8a; font-weight: 600; }
+
+  /* Two-column charts */
+  .db-charts-row {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 11px;
+    flex: 1; min-height: 0;
+  }
+  .db-chart-wrap {
+    background: #fff; border: 1px solid #ececec;
+    border-radius: 12px; padding: 16px;
+    display: flex; flex-direction: column;
+  }
+  .db-chart-title {
+    font-size: 12px; font-weight: 800;
+    color: #0a0a0a; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .db-chart-title::before {
+    content: ''; width: 4px; height: 14px;
+    background: #ECE209; border-radius: 2px;
+  }
+  .db-chart {
+    display: flex; align-items: flex-end; gap: 12px;
+    flex: 1; min-height: 130px;
+  }
+  .db-bar-group { flex: 1; display: flex; gap: 4px; align-items: flex-end; height: 100%; }
+  .db-bar { flex: 1; border-radius: 4px 4px 0 0; background: #ebebe8; }
+  .db-bar.income { background: #16a34a; }
+  .db-bar.expense { background: #dc2626; }
+  .db-chart-labels {
+    display: flex; gap: 12px; margin-top: 9px; padding-left: 4px;
+  }
+  .db-chart-label {
+    flex: 1; text-align: center;
+    font-size: 10px; color: #8a8a8a; font-weight: 700;
+  }
+  .db-chart-legend {
+    display: flex; gap: 14px; margin-top: 11px;
+    font-size: 10.5px; font-weight: 700;
+  }
+  .db-chart-legend-item { display: flex; align-items: center; gap: 5px; color: #525252; }
+  .db-chart-legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  /* Donut chart */
+  .db-donut-wrap {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1; min-height: 130px; position: relative;
+  }
+  .db-donut {
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: conic-gradient(#16a34a 0% 48%, #2563eb 48% 78%, #FF5723 78% 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .db-donut::before {
+    content: ''; position: absolute;
+    inset: 28px; background: #fff; border-radius: 50%;
+  }
+  .db-donut-center {
+    position: relative; z-index: 1; text-align: center;
+  }
+  .db-donut-center-val {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 22px; font-weight: 900; color: #0a0a0a; line-height: 1;
+  }
+  .db-donut-center-lbl {
+    font-size: 9px; color: #8a8a8a; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-top: 3px;
+  }
+  .db-donut-legend {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-top: 14px;
+    font-size: 10.5px; font-weight: 700;
+  }
+  .db-donut-legend-item { display: flex; align-items: center; gap: 6px; color: #525252; }
+
+  /* Caption inferior con disclaimer */
+  .s2-caption {
+    margin-top: 22px;
+    display: flex; align-items: center; gap: 18px;
+    background: rgba(236,226,9,.08);
+    border: 1px solid rgba(236,226,9,.22);
+    border-radius: 16px;
+    padding: 20px 26px;
+  }
+  .s2-caption-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(236,226,9,.18); color: #ECE209;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .s2-caption-text {
+    flex: 1; font-size: 22px; line-height: 1.35;
+    color: rgba(242,242,242,.90); font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .s2-caption-text strong { color: #ECE209; font-weight: 800; }
+
+  /* ═════════ SLIDE 3 — FEATURES (más vendibles) ═════════ */
+  .slide-3::after {
+    top: -100px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(255,87,35,.20), transparent 62%);
+  }
+  .s3-title {
+    font-size: 68px; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 0.98;
+    color: #fff; margin-bottom: 36px;
+  }
+  .s3-title span { color: #FF5723; }
+  .s3-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    flex: 1;
+  }
+  .s3-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 22px;
+    padding: 28px 30px;
+    display: flex; flex-direction: column;
+    gap: 16px;
+    position: relative;
+  }
+  .s3-card-head {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .s3-icon {
+    flex-shrink: 0; width: 58px; height: 58px;
+    border-radius: 14px;
+    background: rgba(255,87,35,.13);
+    display: flex; align-items: center; justify-content: center;
+    color: #FF5723;
+  }
+  .s3-icon.yellow { background: rgba(236,226,9,.13); color: #ECE209; }
+  .s3-card-title {
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -0.02em; color: #fff;
+  }
+  .s3-card-desc {
+    font-size: 17px; line-height: 1.42;
+    color: rgba(242,242,242,.58); font-weight: 500;
+  }
+  .s3-card-bullets {
+    display: flex; flex-direction: column; gap: 7px;
+    margin-top: 2px;
+  }
+  .s3-card-bullet {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 17px; font-weight: 600;
+    color: rgba(242,242,242,.78);
+    letter-spacing: -0.005em;
+  }
+  .s3-card-bullet::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: #FF5723; flex-shrink: 0;
+  }
+  .s3-card.yellow-accent .s3-card-bullet::before { background: #ECE209; }
+
+  /* ═════════ SLIDE 4 — BRIEF + DIFERENCIAL ═════════ */
+  .slide-4::after {
+    top: -120px; left: -160px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(236,226,9,.16), transparent 62%);
+  }
+  .s4-title {
+    font-size: 70px; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1;
+    color: #fff; margin-bottom: 16px;
+  }
+  .s4-title span { color: #ECE209; }
+  .s4-lede {
+    font-size: 24px; line-height: 1.4;
+    color: rgba(242,242,242,.70); font-weight: 500;
+    margin-bottom: 30px; max-width: 820px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Brief stack */
+  .brief-stack {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    border-radius: 24px;
+    padding: 32px;
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(236,226,9,.25);
+    box-shadow: 0 24px 60px rgba(0,0,0,.50);
+    flex: 1;
+    display: flex; flex-direction: column; gap: 22px;
+    min-height: 0;
+  }
+  .brief-stack::before {
+    content: ''; position: absolute;
+    top: -100px; right: -100px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(236,226,9,.30), transparent 65%);
+  }
+  .brief-head {
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative;
+  }
+  .brief-head-left { display: flex; align-items: center; gap: 14px; }
+  .brief-head-iso { width: 42px; height: 42px; }
+  .brief-head-title {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 22px; font-weight: 900;
+    color: #fff; letter-spacing: -0.02em;
+    display: flex; align-items: baseline;
+  }
+  .brief-head-title .pa-app {
+    background: #ECE209; color: #0a0a0a;
+    padding: 2px 7px 3px; border-radius: 6px;
+    margin-left: 4px; font-size: 18px;
+  }
+  .brief-doc-label {
+    font-size: 12px; font-weight: 800;
+    color: #ECE209; letter-spacing: .14em; text-transform: uppercase;
+  }
+
+  .brief-promo-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    position: relative;
+    flex: 1;
+  }
+  .brief-promo {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px; padding: 18px 22px;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+  }
+  .brief-promo-tag {
+    display: inline-flex;
+    background: #ECE209; color: #0a0a0a;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13px; font-weight: 900;
+    padding: 4px 10px; border-radius: 6px;
+    margin-bottom: 10px;
+    width: fit-content;
+  }
+  .brief-promo-name {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 20px; font-weight: 800;
+    color: #fff; margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .brief-promo-items {
+    font-size: 13px; color: rgba(255,255,255,.50);
+    font-weight: 500; line-height: 1.4; margin-bottom: 12px;
+  }
+  .brief-promo-price-row {
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .brief-promo-old {
+    font-size: 13px; color: rgba(255,255,255,.40);
+    text-decoration: line-through; font-weight: 600;
+  }
+  .brief-promo-new {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 24px; font-weight: 900;
+    color: #ECE209;
+    letter-spacing: -0.02em;
+  }
+
+  .brief-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; padding-top: 14px;
+    border-top: 1px dashed rgba(255,255,255,.12);
+  }
+  .brief-foot-meta {
+    font-size: 14px; color: rgba(255,255,255,.55); font-weight: 600;
+  }
+  .brief-foot-meta strong { color: #ECE209; font-weight: 800; }
+  .brief-foot-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #ECE209; color: #0a0a0a;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 15px; font-weight: 900;
+    padding: 10px 18px; border-radius: 9px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Beneficios del brief */
+  .s4-bullets {
+    margin-top: 24px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+  }
+  .s4-bullet {
+    background: rgba(236,226,9,.06);
+    border: 1px solid rgba(236,226,9,.18);
+    border-radius: 18px;
+    padding: 22px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .s4-bullet-icon {
+    width: 42px; height: 42px; border-radius: 11px;
+    background: rgba(236,226,9,.16); color: #ECE209;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .s4-bullet-title {
+    font-size: 20px; font-weight: 800;
+    color: #fff; letter-spacing: -0.02em;
+  }
+  .s4-bullet-desc {
+    font-size: 16px; line-height: 1.4;
+    color: rgba(242,242,242,.62); font-weight: 500;
+  }
+
+  /* ═════════ SLIDE 5 — DIFERENCIALES + CTA ═════════ */
+  .slide-5::after {
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 900px; height: 900px;
+    background: radial-gradient(circle, rgba(255,87,35,.16), transparent 58%);
+  }
+  .slide-5 .slide-body { justify-content: flex-start; }
+  .slide-4 .slide-body { justify-content: flex-start; }
+  .slide-3 .slide-body { justify-content: flex-start; }
+  .s5-title {
+    font-size: 86px; font-weight: 800;
+    letter-spacing: -0.04em; line-height: 0.94;
+    color: #fff; margin-bottom: 44px;
+  }
+  .s5-title span { color: #FF5723; }
+  .s5-pills { display: flex; flex-direction: column; gap: 16px; margin-bottom: 36px; }
+  .s5-pill {
+    display: flex; align-items: center; gap: 22px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 20px;
+    padding: 24px 30px;
+  }
+  .s5-pill-icon {
+    flex-shrink: 0; width: 60px; height: 60px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .s5-pill-icon.orange { background: rgba(255,87,35,.13); color: #FF5723; }
+  .s5-pill-icon.yellow { background: rgba(236,226,9,.13); color: #ECE209; }
+  .s5-pill-text { flex: 1; }
+  .s5-pill-title {
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -0.02em; color: #fff; margin-bottom: 4px;
+  }
+  .s5-pill-title.yellow { color: #ECE209; }
+  .s5-pill-desc {
+    font-size: 19px; line-height: 1.4;
+    color: rgba(242,242,242,.62); font-weight: 500;
+  }
+  .s5-stats {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 14px;
+    margin-bottom: 30px;
+  }
+  .s5-stat {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 24px 26px; text-align: left;
+  }
+  .s5-stat-val {
+    font-size: 48px; font-weight: 800;
+    color: #ECE209; letter-spacing: -0.03em;
+    line-height: 1; margin-bottom: 6px;
+  }
+  .s5-stat-lbl {
+    font-size: 14px; font-weight: 700;
+    color: rgba(242,242,242,.60);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .s5-cta {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #FF5723; border-radius: 22px; padding: 28px 36px;
+    box-shadow: 0 14px 40px rgba(255,87,35,.40);
+  }
+  .s5-cta-text {
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -0.02em; color: #fff; line-height: 1.22;
+  }
+  .s5-cta-arrow {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: rgba(255,255,255,.20);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG defs reutilizables -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="pa-iso-ink" viewBox="0 0 180 180">
+      <rect x="10" y="16" width="66" height="66" rx="8" fill="#0a0a0a"/>
+      <rect x="94" y="16" width="66" height="66" rx="8" fill="#0a0a0a"/>
+      <rect x="10" y="98" width="66" height="66" rx="8" fill="#0a0a0a"/>
+      <path d="M102 98H160V106C160 138.033 134.033 164 102 164H94V106C94 101.582 97.5817 98 102 98Z" fill="#ECE209"/>
+    </symbol>
+    <symbol id="pa-iso-white" viewBox="0 0 180 180">
+      <rect x="10" y="16" width="66" height="66" rx="8" fill="#fff"/>
+      <rect x="94" y="16" width="66" height="66" rx="8" fill="#fff"/>
+      <rect x="10" y="98" width="66" height="66" rx="8" fill="#fff"/>
+      <path d="M102 98H160V106C160 138.033 134.033 164 102 164H94V106C94 101.582 97.5817 98 102 98Z" fill="#ECE209"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="toolbar">
+  <div class="toolbar-title">Itera <span>·</span> Carrusel Feed <span>·</span> 1080×1350 <span>·</span> PymesApp <span>·</span> 14/05/2026</div>
+  <div style="display:flex;gap:16px;align-items:center">
+    <span id="status" class="status">5 slides listas</span>
+    <button id="btn-all" class="btn">Descargar todas (PNG)</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 1 — PRESENTACIÓN
+════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-actions">
+    <span class="slide-label">Slide 1</span>
+    <button class="btn" data-export="1">Descargar PNG</button>
+  </div>
+  <div class="slide slide-1" data-name="itera-pymesapp-01-presentacion">
+    <div class="slide-header">
+      <div class="header-left">
+        <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+          <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+          <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+          <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+          <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+        </svg>
+        <span class="wm-itera">Itera</span>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:rgba(242,242,242,.40);letter-spacing:0.10em;text-transform:uppercase;">Presenta</div>
+    </div>
+
+    <div class="slide-body">
+      <div class="eyebrow">Nuevo lanzamiento</div>
+
+      <div class="s1-logo-card">
+        <svg class="s1-logo-isotipo" viewBox="0 0 180 180"><use href="#pa-iso-white"/></svg>
+        <div class="s1-logo-wm">Pymes<span class="pa-app">App</span></div>
+      </div>
+      <div class="s1-by">Un producto de <span>Itera</span></div>
+
+      <h1 class="s1-title" style="margin-top:48px;">El sistema<br>que tu negocio<br><span>necesitaba.</span></h1>
+
+      <p class="s1-desc">Un panel operativo completo para gestionar ventas, productos, clientes, proveedores y finanzas. Todo en un solo lugar. Sin planillas, sin caos.</p>
+    </div>
+
+    <div class="s1-arrow">
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M13 5l7 7-7 7"/>
+      </svg>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-handle">@weareitera</div>
+      <div class="footer-page">01 / 05</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 2 — DASHBOARD FINANZAS
+════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-actions">
+    <span class="slide-label">Slide 2</span>
+    <button class="btn" data-export="2">Descargar PNG</button>
+  </div>
+  <div class="slide slide-2" data-name="itera-pymesapp-02-finanzas">
+    <div class="slide-header">
+      <div class="header-left">
+        <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+          <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+          <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+          <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+          <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+        </svg>
+        <span class="wm-itera">Itera</span>
+      </div>
+      <div class="header-right">
+        <div class="pa-header-iso"><svg width="100%" height="100%" viewBox="0 0 180 180"><use href="#pa-iso-white"/></svg></div>
+        <div class="pa-header-wm">Pymes<span class="pa-app">App</span></div>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="eyebrow">Finanzas en tiempo real</div>
+      <h2 class="s2-title">Tus números,<br>siempre <span>claros.</span></h2>
+
+      <div class="db-mock">
+
+        <!-- Browser chrome -->
+        <div class="db-chrome">
+          <div class="db-chrome-dot" style="background:#ff5f56"></div>
+          <div class="db-chrome-dot" style="background:#ffbd2e"></div>
+          <div class="db-chrome-dot" style="background:#27c93f"></div>
+          <div class="db-chrome-bar">pymesapp.com/finanzas</div>
+        </div>
+
+        <div class="db-body">
+          <!-- Sidebar -->
+          <div class="db-sidebar">
+            <div class="db-user">
+              <div class="db-avatar">MD</div>
+              <div class="db-user-info">
+                <div class="db-user-name">Merchant Demo</div>
+                <div class="db-user-email">merchant@pyme...</div>
+              </div>
+            </div>
+            <div class="db-nav-section">
+              <div class="db-nav-item">
+                <svg class="db-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                Dashboard
+              </div>
+              <div class="db-nav-item">
+                <svg class="db-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1.5"/><circle cx="20" cy="21" r="1.5"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+                Ventas
+              </div>
+              <div class="db-nav-item">
+                <svg class="db-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg>
+                Entregas
+              </div>
+              <div class="db-nav-item">
+                <svg class="db-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Clientes
+              </div>
+              <div class="db-nav-item">
+                <svg class="db-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                Productos
+              </div>
+              <div class="db-nav-item">
+                <svg class="db-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3v4M8 3v4"/></svg>
+                Proveedores
+              </div>
+              <div class="db-nav-item">
+                <svg class="db-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/></svg>
+                Promociones
+              </div>
+              <div class="db-nav-item active">
+                <svg class="db-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+                Finanzas
+              </div>
+            </div>
+            <div class="db-brand-row">
+              <svg class="db-brand-iso" viewBox="0 0 180 180"><use href="#pa-iso-ink"/></svg>
+              <div class="db-brand-name">Pymes<span class="pa-app">App</span></div>
+            </div>
+          </div>
+
+          <!-- Main -->
+          <div class="db-main">
+            <div class="db-topbar">
+              <span class="db-page-title">Finanzas</span>
+              <div class="db-topbar-actions">
+                <span class="db-btn-soft">👁 Ocultar montos</span>
+                <span class="db-btn-yellow">+ Nuevo egreso</span>
+              </div>
+            </div>
+            <div class="db-content">
+              <div class="db-h1">Ingresos y Egresos</div>
+              <div class="db-sub-desc">Ingresos <span class="green">$ 18.896.048</span> · Egresos <span class="red">$ 938.023</span> · Balance <span class="green">$ 17.958.025</span></div>
+
+              <div class="db-period-btns">
+                <div class="db-period-btn">Hoy</div>
+                <div class="db-period-btn">Esta semana</div>
+                <div class="db-period-btn">Este mes</div>
+                <div class="db-period-btn">Este año</div>
+                <div class="db-period-btn active">Todo</div>
+              </div>
+
+              <div class="db-kpis">
+                <div class="db-kpi">
+                  <div class="db-kpi-head">
+                    <span class="db-kpi-lbl">Total ingresos</span>
+                    <span class="db-kpi-icon green">↗</span>
+                  </div>
+                  <div class="db-kpi-val green">$18.896.048</div>
+                  <div class="db-kpi-sub">87 ventas</div>
+                </div>
+                <div class="db-kpi">
+                  <div class="db-kpi-head">
+                    <span class="db-kpi-lbl">Total egresos</span>
+                    <span class="db-kpi-icon red">↘</span>
+                  </div>
+                  <div class="db-kpi-val red">$938.023</div>
+                  <div class="db-kpi-sub">30 egresos</div>
+                </div>
+                <div class="db-kpi">
+                  <div class="db-kpi-head">
+                    <span class="db-kpi-lbl">Balance neto</span>
+                    <span class="db-kpi-icon gray">−</span>
+                  </div>
+                  <div class="db-kpi-val">$17.958.025</div>
+                  <div class="db-kpi-sub">Positivo</div>
+                </div>
+                <div class="db-kpi">
+                  <div class="db-kpi-head">
+                    <span class="db-kpi-lbl">Operaciones</span>
+                    <span class="db-kpi-icon gray">#</span>
+                  </div>
+                  <div class="db-kpi-val">117</div>
+                  <div class="db-kpi-sub">ventas + egresos</div>
+                </div>
+              </div>
+
+              <div class="db-charts-row">
+                <div class="db-chart-wrap">
+                  <div class="db-chart-title">Ingresos vs Egresos</div>
+                  <div class="db-chart">
+                    <div class="db-bar-group">
+                      <div class="db-bar income" style="height:60px"></div>
+                      <div class="db-bar expense" style="height:6px"></div>
+                    </div>
+                    <div class="db-bar-group">
+                      <div class="db-bar income" style="height:100px"></div>
+                      <div class="db-bar expense" style="height:7px"></div>
+                    </div>
+                    <div class="db-bar-group">
+                      <div class="db-bar income" style="height:78px"></div>
+                      <div class="db-bar expense" style="height:6px"></div>
+                    </div>
+                    <div class="db-bar-group">
+                      <div class="db-bar income" style="height:34px"></div>
+                      <div class="db-bar expense" style="height:3px"></div>
+                    </div>
+                  </div>
+                  <div class="db-chart-labels">
+                    <div class="db-chart-label">Feb 2026</div>
+                    <div class="db-chart-label">Mar 2026</div>
+                    <div class="db-chart-label">Abr 2026</div>
+                    <div class="db-chart-label">May 2026</div>
+                  </div>
+                  <div class="db-chart-legend">
+                    <div class="db-chart-legend-item">
+                      <span class="db-chart-legend-dot" style="background:#16a34a"></span>Ingresos
+                    </div>
+                    <div class="db-chart-legend-item">
+                      <span class="db-chart-legend-dot" style="background:#dc2626"></span>Egresos
+                    </div>
+                  </div>
+                </div>
+
+                <div class="db-chart-wrap">
+                  <div class="db-chart-title">Pagos por medio</div>
+                  <div class="db-donut-wrap">
+                    <div class="db-donut">
+                      <div class="db-donut-center">
+                        <div class="db-donut-center-val">117</div>
+                        <div class="db-donut-center-lbl">Operac.</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="db-donut-legend">
+                    <div class="db-donut-legend-item">
+                      <span class="db-chart-legend-dot" style="background:#16a34a"></span>Efectivo · 48%
+                    </div>
+                    <div class="db-donut-legend-item">
+                      <span class="db-chart-legend-dot" style="background:#2563eb"></span>Tarjeta · 30%
+                    </div>
+                    <div class="db-donut-legend-item">
+                      <span class="db-chart-legend-dot" style="background:#FF5723"></span>Transfer. · 22%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="s2-caption">
+        <div class="s2-caption-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <div class="s2-caption-text">Ingresos, egresos y balance <strong>en vivo</strong>. Sin Excel, sin esperar al contador a fin de mes.</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-handle">@weareitera</div>
+      <div class="footer-page">02 / 05</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 3 — FEATURES VENDIBLES
+════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-actions">
+    <span class="slide-label">Slide 3</span>
+    <button class="btn" data-export="3">Descargar PNG</button>
+  </div>
+  <div class="slide slide-3" data-name="itera-pymesapp-03-features">
+    <div class="slide-header">
+      <div class="header-left">
+        <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+          <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+          <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+          <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+          <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+        </svg>
+        <span class="wm-itera">Itera</span>
+      </div>
+      <div class="header-right">
+        <div class="pa-header-iso"><svg width="100%" height="100%" viewBox="0 0 180 180"><use href="#pa-iso-white"/></svg></div>
+        <div class="pa-header-wm">Pymes<span class="pa-app">App</span></div>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="eyebrow">Todo en uno</div>
+      <h2 class="s3-title">Un sistema<br>que <span>trabaja por vos.</span></h2>
+
+      <div class="s3-grid">
+        <div class="s3-card">
+          <div class="s3-card-head">
+            <div class="s3-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1.5"/><circle cx="20" cy="21" r="1.5"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            </div>
+            <div class="s3-card-title">Ventas</div>
+          </div>
+          <div class="s3-card-bullets">
+            <div class="s3-card-bullet">Efectivo, tarjeta o transferencia</div>
+            <div class="s3-card-bullet">Tickets PDF al instante</div>
+            <div class="s3-card-bullet">Stock que se descuenta solo</div>
+            <div class="s3-card-bullet">Entregas y retiros integrados</div>
+          </div>
+        </div>
+
+        <div class="s3-card">
+          <div class="s3-card-head">
+            <div class="s3-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <div class="s3-card-title">Productos</div>
+          </div>
+          <div class="s3-card-bullets">
+            <div class="s3-card-bullet">Catálogo con imágenes</div>
+            <div class="s3-card-bullet">Categorías y proveedores</div>
+            <div class="s3-card-bullet">Margen y precio automático</div>
+            <div class="s3-card-bullet">Alertas de bajo stock</div>
+          </div>
+        </div>
+
+        <div class="s3-card">
+          <div class="s3-card-head">
+            <div class="s3-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            </div>
+            <div class="s3-card-title">Clientes</div>
+          </div>
+          <div class="s3-card-bullets">
+            <div class="s3-card-bullet">Base con historial completo</div>
+            <div class="s3-card-bullet">Crear venta desde el cliente</div>
+            <div class="s3-card-bullet">Búsqueda rápida en segundos</div>
+            <div class="s3-card-bullet">Top clientes del mes</div>
+          </div>
+        </div>
+
+        <div class="s3-card yellow-accent">
+          <div class="s3-card-head">
+            <div class="s3-icon yellow">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/></svg>
+            </div>
+            <div class="s3-card-title">Promociones</div>
+          </div>
+          <div class="s3-card-bullets">
+            <div class="s3-card-bullet">Combos con descuento automático</div>
+            <div class="s3-card-bullet">Precio original y final calculados</div>
+            <div class="s3-card-bullet">Activá y desactivá en un clic</div>
+            <div class="s3-card-bullet">Brief de precios descargable</div>
+          </div>
+        </div>
+
+        <div class="s3-card">
+          <div class="s3-card-head">
+            <div class="s3-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+            </div>
+            <div class="s3-card-title">Finanzas</div>
+          </div>
+          <div class="s3-card-bullets">
+            <div class="s3-card-bullet">Ingresos, egresos y balance</div>
+            <div class="s3-card-bullet">Gráficos por período</div>
+            <div class="s3-card-bullet">Distribución por medio de pago</div>
+            <div class="s3-card-bullet">Reportes listos para imprimir</div>
+          </div>
+        </div>
+
+        <div class="s3-card">
+          <div class="s3-card-head">
+            <div class="s3-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            </div>
+            <div class="s3-card-title">Multi-dispositivo</div>
+          </div>
+          <div class="s3-card-bullets">
+            <div class="s3-card-bullet">Vendé desde el celular</div>
+            <div class="s3-card-bullet">Controlá desde la PC</div>
+            <div class="s3-card-bullet">Multi-usuario y multi-rol</div>
+            <div class="s3-card-bullet">Sin instalar nada</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-handle">@weareitera</div>
+      <div class="footer-page">03 / 05</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 4 — BRIEF DE PRECIOS
+════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-actions">
+    <span class="slide-label">Slide 4</span>
+    <button class="btn" data-export="4">Descargar PNG</button>
+  </div>
+  <div class="slide slide-4" data-name="itera-pymesapp-04-brief">
+    <div class="slide-header">
+      <div class="header-left">
+        <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+          <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+          <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+          <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+          <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+        </svg>
+        <span class="wm-itera">Itera</span>
+      </div>
+      <div class="header-right">
+        <div class="pa-header-iso"><svg width="100%" height="100%" viewBox="0 0 180 180"><use href="#pa-iso-white"/></svg></div>
+        <div class="pa-header-wm">Pymes<span class="pa-app">App</span></div>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="eyebrow">Feature destacada</div>
+      <h2 class="s4-title">Brief de precios<br><span>descargable.</span></h2>
+      <p class="s4-lede">Convertí tus promociones en un PDF profesional. Compartílo por WhatsApp y vendé sin escribir un solo precio a mano.</p>
+
+      <div class="brief-stack">
+        <div class="brief-head">
+          <div class="brief-head-left">
+            <svg class="brief-head-iso" viewBox="0 0 180 180"><use href="#pa-iso-white"/></svg>
+            <div class="brief-head-title">Pymes<span class="pa-app">App</span></div>
+          </div>
+          <div class="brief-doc-label">Brief de Precios · Mayo 2026</div>
+        </div>
+
+        <div class="brief-promo-grid">
+          <div class="brief-promo">
+            <span class="brief-promo-tag">-18%</span>
+            <div class="brief-promo-name">Bundle Cuidado Personal</div>
+            <div class="brief-promo-items">Shampoo + Acondicionador + Crema</div>
+            <div class="brief-promo-price-row">
+              <span class="brief-promo-old">$17.540</span>
+              <span class="brief-promo-new">$14.383</span>
+            </div>
+          </div>
+          <div class="brief-promo">
+            <span class="brief-promo-tag">-10%</span>
+            <div class="brief-promo-name">Combo Electro Home</div>
+            <div class="brief-promo-items">Auriculares + Parlante + Cargador</div>
+            <div class="brief-promo-price-row">
+              <span class="brief-promo-old">$6.470</span>
+              <span class="brief-promo-new">$5.823</span>
+            </div>
+          </div>
+          <div class="brief-promo">
+            <span class="brief-promo-tag">-19%</span>
+            <div class="brief-promo-name">Pack Cocina Completa</div>
+            <div class="brief-promo-items">Sartén + Wok + Cuchillos</div>
+            <div class="brief-promo-price-row">
+              <span class="brief-promo-old">$28.260</span>
+              <span class="brief-promo-new">$22.321</span>
+            </div>
+          </div>
+          <div class="brief-promo">
+            <span class="brief-promo-tag">-12%</span>
+            <div class="brief-promo-name">Pack Deportivo</div>
+            <div class="brief-promo-items">Zapatillas + Remera + Short</div>
+            <div class="brief-promo-price-row">
+              <span class="brief-promo-old">$18.025</span>
+              <span class="brief-promo-new">$15.862</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="brief-foot">
+          <div class="brief-foot-meta"><strong>5 promociones</strong> · Vigente hasta 31/05/2026</div>
+          <div class="brief-foot-cta">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar PDF
+          </div>
+        </div>
+      </div>
+
+      <div class="s4-bullets">
+        <div class="s4-bullet">
+          <div class="s4-bullet-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="s4-bullet-title">Generado al instante</div>
+          <div class="s4-bullet-desc">Tus promos en PDF con un clic.</div>
+        </div>
+        <div class="s4-bullet">
+          <div class="s4-bullet-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          </div>
+          <div class="s4-bullet-title">Listo para WhatsApp</div>
+          <div class="s4-bullet-desc">Compartilo donde tus clientes están.</div>
+        </div>
+        <div class="s4-bullet">
+          <div class="s4-bullet-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="s4-bullet-title">Ahorro real de tiempo</div>
+          <div class="s4-bullet-desc">Sin copiar precios uno por uno.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-handle">@weareitera</div>
+      <div class="footer-page">04 / 05</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 5 — DIFERENCIAL + CTA
+════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-actions">
+    <span class="slide-label">Slide 5</span>
+    <button class="btn" data-export="5">Descargar PNG</button>
+  </div>
+  <div class="slide slide-5" data-name="itera-pymesapp-05-cta">
+    <div class="slide-header">
+      <div class="header-left">
+        <svg class="iso-svg" viewBox="0 0 52 40" fill="none">
+          <rect x="2" y="28" width="10" height="9" rx="3" fill="white" opacity="0.28"/>
+          <rect x="14" y="22" width="10" height="15" rx="3" fill="white" opacity="0.52"/>
+          <rect x="26" y="14" width="10" height="23" rx="3" fill="white" opacity="0.76"/>
+          <rect x="40" y="4" width="5" height="33" rx="3" fill="#FF5723"/>
+        </svg>
+        <span class="wm-itera">Itera</span>
+      </div>
+      <div class="header-right">
+        <div class="pa-header-iso"><svg width="100%" height="100%" viewBox="0 0 180 180"><use href="#pa-iso-white"/></svg></div>
+        <div class="pa-header-wm">Pymes<span class="pa-app">App</span></div>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="eyebrow">Por qué PymesApp</div>
+      <h2 class="s5-title">Más que un sistema.<br><span>Un aliado.</span></h2>
+
+      <div class="s5-pills">
+        <div class="s5-pill">
+          <div class="s5-pill-icon yellow">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="s5-pill-text">
+            <div class="s5-pill-title yellow">Potenciado con IA</div>
+            <div class="s5-pill-desc">Análisis inteligente para que tomes mejores decisiones.</div>
+          </div>
+        </div>
+        <div class="s5-pill">
+          <div class="s5-pill-icon orange">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6"/></svg>
+          </div>
+          <div class="s5-pill-text">
+            <div class="s5-pill-title">Multi-tenant y multi-usuario</div>
+            <div class="s5-pill-desc">Varios negocios o sucursales con accesos separados.</div>
+          </div>
+        </div>
+        <div class="s5-pill">
+          <div class="s5-pill-icon orange">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="s5-pill-text">
+            <div class="s5-pill-title">Fácil desde el primer día</div>
+            <div class="s5-pill-desc">Sin manuales. Sin capacitaciones. Sin excusas.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="s5-stats">
+        <div class="s5-stat">
+          <div class="s5-stat-val">100%</div>
+          <div class="s5-stat-lbl">En la nube</div>
+        </div>
+        <div class="s5-stat">
+          <div class="s5-stat-val">24/7</div>
+          <div class="s5-stat-lbl">Soporte</div>
+        </div>
+        <div class="s5-stat">
+          <div class="s5-stat-val">0</div>
+          <div class="s5-stat-lbl">Instalación</div>
+        </div>
+      </div>
+
+      <div class="s5-cta">
+        <div class="s5-cta-text">¿Querés verlo en acción?<br>Pedí tu demo.</div>
+        <div class="s5-cta-arrow">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-handle">@weareitera · weareitera.com</div>
+      <div class="footer-page">05 / 05</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function inlineExternalImages() {
+    const imgs = document.querySelectorAll('img');
+    await Promise.all([...imgs].map(async (img) => {
+      if (img.src.startsWith('data:')) return;
+      try {
+        const res = await fetch(img.src, { mode: 'cors' });
+        const blob = await res.blob();
+        const dataUrl = await new Promise((r) => {
+          const fr = new FileReader();
+          fr.onload = () => r(fr.result);
+          fr.readAsDataURL(blob);
+        });
+        img.src = dataUrl;
+      } catch (e) { console.warn('No se pudo inlinear imagen', img.src, e); }
+    }));
+  }
+  let imagesInlined = false;
+
+  async function exportSlide(slideEl, name) {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    if (!imagesInlined) { await inlineExternalImages(); imagesInlined = true; }
+    const canvas = await html2canvas(slideEl, {
+      width: 1080, height: 1350,
+      scale: 2,
+      useCORS: true,
+      backgroundColor: null,
+      logging: false,
+      allowTaint: false,
+    });
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${name}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function setStatus(msg) { document.getElementById('status').textContent = msg; }
+
+  async function exportOne(n) {
+    const slide = document.querySelector(`.slide-${n}`);
+    setStatus(`Exportando slide ${n}...`);
+    await exportSlide(slide, slide.dataset.name);
+    setStatus(`✓ ${slide.dataset.name}.png descargado`);
+  }
+
+  async function exportAll() {
+    const slides = document.querySelectorAll('.slide');
+    for (let i = 0; i < slides.length; i++) {
+      setStatus(`Exportando ${i + 1}/${slides.length}...`);
+      await exportSlide(slides[i], slides[i].dataset.name);
+      await new Promise((r) => setTimeout(r, 400));
+    }
+    setStatus(`✓ ${slides.length} slides descargadas`);
+  }
+
+  document.querySelectorAll('[data-export]').forEach((btn) => {
+    btn.addEventListener('click', () => exportOne(btn.dataset.export));
+  });
+  document.getElementById('btn-all').addEventListener('click', exportAll);
+</script>
+</body>
+</html>

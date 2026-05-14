@@ -154,7 +154,7 @@
   }
 
   .intro-text {
-    font-size: 7.5pt;
+    font-size: 9pt;
     color: #555;
     line-height: 1.65;
   }
@@ -178,41 +178,34 @@
   .features-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5mm;
+    gap: 0;
   }
 
   .feature-item {
-    background: #fff;
-    border: 1px solid #E2E0DA;
-    border-radius: 2.5mm;
-    padding: 2.7mm 4mm;
     display: flex;
     align-items: center;
     gap: 3mm;
+    padding: 2.8mm 1mm;
+    border-bottom: 1px solid #E2E0DA;
+  }
+
+  .feature-item:last-child {
+    border-bottom: none;
   }
 
   .feature-dot {
     flex-shrink: 0;
-    width: 4.5mm;
-    height: 4.5mm;
-    border-radius: 50%;
-    background: rgba(255,87,35,.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .feature-dot::after {
-    content: '';
-    width: 2mm;
-    height: 2mm;
+    width: 3mm;
+    height: 3mm;
     border-radius: 50%;
     background: #FF5723;
-    display: block;
+    opacity: 0.7;
   }
 
+  .feature-dot::after { display: none; }
+
   .feature-text {
-    font-size: 7.5pt;
+    font-size: 9.5pt;
     color: #333;
     line-height: 1.45;
     font-weight: 500;
@@ -222,23 +215,25 @@
   .includes-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5mm;
+    gap: 0;
   }
 
   .include-item {
     display: flex;
     align-items: center;
     gap: 3mm;
-    background: #fff;
-    border: 1px solid #E2E0DA;
-    border-radius: 2.5mm;
-    padding: 2.7mm 4mm;
+    padding: 2.8mm 1mm;
+    border-bottom: 1px solid #E2E0DA;
+  }
+
+  .include-item:last-child {
+    border-bottom: none;
   }
 
   .include-check {
     flex-shrink: 0;
-    width: 4.5mm;
-    height: 4.5mm;
+    width: 3.5mm;
+    height: 3.5mm;
     border-radius: 50%;
     background: #111214;
     display: flex;
@@ -247,7 +242,7 @@
   }
 
   .include-text {
-    font-size: 7.5pt;
+    font-size: 9.5pt;
     font-weight: 500;
     color: #333;
   }
@@ -413,7 +408,7 @@
     <div class="hero-band-title">PymesApp — Software de gestión</div>
     <div class="hero-band-meta">
       Cliente: La Merced / PetShop<br>
-      Fecha: Mayo 2026 · Ref. #001
+      Fecha: Mayo 2026
     </div>
   </div>
 
@@ -424,7 +419,7 @@
     <div class="intro">
       <div class="intro-icon">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5723" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
         </svg>
       </div>
       <div class="intro-text">
@@ -546,11 +541,11 @@
     <div class="footer-contact">
       <div class="footer-contact-item">
         <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        hola@itera.com
+        <a href="mailto:hola@itera.com" style="color:inherit;text-decoration:none">hola@itera.com</a>
       </div>
       <div class="footer-contact-item">
         <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        weareitera.com
+        <a href="https://weareitera.com" target="_blank" style="color:inherit;text-decoration:none">weareitera.com</a>
       </div>
     </div>
   </div>
