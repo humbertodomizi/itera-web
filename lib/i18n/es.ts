@@ -72,7 +72,7 @@ export const es: Dictionary = {
   },
   how: {
     label: "Cómo trabajamos",
-    h: "Un proceso simple,\npensado para ti.",
+    h: "Así trabajamos\ncon IA y diseño.",
     steps: [
       {
         n: "01",
@@ -102,7 +102,7 @@ export const es: Dictionary = {
   },
   processes: {
     label: "Procesos",
-    h: "Así trabajamos\ncon IA y diseño.",
+    h: "Un proceso simple,\npensado para ti.",
     sub: "Combinamos diseño, desarrollo e inteligencia artificial para construir software que entiende a las personas. Estos son los procesos que aplicamos en cada proyecto.",
     items: [
       {

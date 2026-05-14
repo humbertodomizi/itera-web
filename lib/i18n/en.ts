@@ -36,7 +36,7 @@ export const en: Dictionary = {
   },
   how: {
     label: "How we work",
-    h: "A simple process,\nbuilt for you.",
+    h: "How we work\nwith AI and design.",
     steps: [
       { n: "01", icon: "compass", title: "We listen", desc: "We talk about your business, your goals, and what's slowing you down. No tech jargon — just understanding before proposing." },
       { n: "02", icon: "lightbulb", title: "We design", desc: "We present a clear proposal: what we'll build, how it'll look, how long it takes, and what it'll cost. No surprises." },
@@ -46,7 +46,7 @@ export const en: Dictionary = {
   },
   processes: {
     label: "Process",
-    h: "How we work\nwith AI and design.",
+    h: "A simple process,\nbuilt for you.",
     sub: "We combine design, development, and AI to build software that understands people. These are the processes we apply on every project.",
     items: [
       { icon: "compass", tag: "Discovery", title: "We understand your business before proposing technology", desc: "Before writing a single line of code, we take time to understand how you work today and what's slowing you down. Only then does the solution really fit your day-to-day." },
