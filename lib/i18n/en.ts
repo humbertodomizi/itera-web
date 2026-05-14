@@ -76,7 +76,7 @@ export const en: Dictionary = {
       ["Company", ["About", "Blog", "Contact"]],
       ["Connect", ["LinkedIn", "Instagram", "hello@itera.com"]],
     ],
-    copy: "© 2025 Itera. All rights reserved.",
+    copy: "© Itera. All rights reserved.",
     sub: "Technology to evolve your business.",
   },
 };
