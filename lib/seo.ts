@@ -3,7 +3,7 @@ export const siteConfig = {
   title: "Itera - Tecnologia para evolucionar empresas",
   description:
     "Sistemas empresariales, automatizacion y transformacion digital para empresas que necesitan operar mejor, escalar procesos y reducir friccion operativa.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://itera-web-three.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://weareitera.com/",
   locale: "es_ES",
   keywords: [
     "Itera",
@@ -26,7 +26,7 @@ export function getSiteUrl() {
   try {
     return new URL(siteConfig.url);
   } catch {
-    return new URL("https://itera-web-three.vercel.app/");
+    return new URL("https://weareitera.com/");
   }
 }
 
